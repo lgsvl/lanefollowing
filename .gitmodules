@@ -1,0 +1,6 @@
+[submodule "catkin_ws/src/rosbridge_suite"]
+	path = catkin_ws/src/rosbridge_suite
+	url = https://github.com/RobotWebTools/rosbridge_suite
+[submodule "ros2_ws/src/ros2_message_filters"]
+	path = ros2_ws/src/ros2_message_filters
+	url = https://github.com/intel/ros2_message_filters.git

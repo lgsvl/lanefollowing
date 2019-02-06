@@ -28,7 +28,3 @@ ros2_ws/install
 # Byte-compiled
 *.pyc
 __pycache__/
-
-# Third party
-catkin_ws/src/rosbridge_suite/
-ros2_ws/src/ros2_message_filters/

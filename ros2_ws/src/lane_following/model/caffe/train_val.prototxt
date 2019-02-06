@@ -1,0 +1,269 @@
+name: "LaneFollowing"
+layer {
+    name: "train_data"
+    type: "HDF5Data"
+    top: "data"
+    top: "label"
+    include {
+        phase: TRAIN
+    }
+    hdf5_data_param {
+        source: "hdf5/train_h5_list.txt"
+        batch_size: 256
+        shuffle: true
+    }
+}
+layer {
+    name: "test_data"
+    type: "HDF5Data"
+    top: "data"
+    top: "label"
+    include {
+        phase: TEST
+    }
+    hdf5_data_param {
+        source: "hdf5/test_h5_list.txt"
+        batch_size: 256
+        shuffle: true
+    }
+}
+# layer {
+#     name: "train_data"
+#     type: "Data"
+#     top: "data"
+#     top: "label"
+#     include {
+#         phase: TRAIN
+#     }
+#     data_param {
+#         source: "train_lmdb"
+#         batch_size: 50
+#         backend: LMDB
+#     }
+#     # transform_param {
+#     #     scale: 0.00390625
+#     # }
+# }
+# layer {
+#     name: "test_data"
+#     type: "Data"
+#     top: "data"
+#     top: "label"
+#     include {
+#         phase: TEST
+#     }
+#     data_param {
+#         source: "test_lmdb"
+#         batch_size: 50
+#         backend: LMDB
+#     }
+#     # transform_param {
+#     #     scale: 0.00390625
+#     # }
+# }
+layer {
+    name: "conv1"
+    type: "Convolution"
+    bottom: "data"
+    top: "conv1"
+    convolution_param {
+        num_output: 24
+        pad: 0
+        kernel_size: 5
+        stride: 2
+        weight_filler {
+            type: "xavier"
+        }
+    }
+}
+layer {
+    name: "conv1_relu"
+    type: "ReLU"
+    bottom: "conv1"
+    top: "layer1"
+}
+layer {
+    name: "conv2"
+    type: "Convolution"
+    bottom: "layer1"
+    top: "conv2"
+    convolution_param {
+        num_output: 36
+        pad: 0
+        kernel_size: 5
+        stride: 2
+        weight_filler {
+            type: "xavier"
+        }
+    }
+}
+layer {
+    name: "conv2_relu"
+    type: "ReLU"
+    bottom: "conv2"
+    top: "layer2"
+}
+layer {
+    name: "conv3"
+    type: "Convolution"
+    bottom: "layer2"
+    top: "conv3"
+    convolution_param {
+        num_output: 48
+        pad: 0
+        kernel_size: 5
+        stride: 2
+        weight_filler {
+            type: "xavier"
+        }
+    }
+}
+layer {
+    name: "conv3_relu"
+    type: "ReLU"
+    bottom: "conv3"
+    top: "layer3"
+}
+layer {
+    name: "conv4"
+    type: "Convolution"
+    bottom: "layer3"
+    top: "conv4"
+    convolution_param {
+        num_output: 64
+        pad: 0
+        kernel_size: 3
+        stride: 1
+        weight_filler {
+            type: "xavier"
+        }
+    }
+}
+layer {
+    name: "conv4_relu"
+    type: "ReLU"
+    bottom: "conv4"
+    top: "layer4"
+}
+layer {
+    name: "conv5"
+    type: "Convolution"
+    bottom: "layer4"
+    top: "conv5"
+    convolution_param {
+        num_output: 64
+        pad: 0
+        kernel_size: 3
+        stride: 1
+        weight_filler {
+            type: "xavier"
+        }
+    }
+}
+layer {
+    name: "conv5_relu"
+    type: "ReLU"
+    bottom: "conv5"
+    top: "layer5"
+}
+layer {
+    name: "fc1"
+    type: "InnerProduct"
+    bottom: "layer5"
+    top: "fc1"
+    inner_product_param {
+        num_output: 1164
+        weight_filler {
+            type: "xavier"
+        }
+    }
+}
+layer {
+    name: "fc1_relu"
+    type: "ReLU"
+    bottom: "fc1"
+    top: "fc1_relu"
+}
+layer {
+    name: "fc2"
+    type: "InnerProduct"
+    bottom: "fc1_relu"
+    top: "fc2"
+    inner_product_param {
+        num_output: 200
+        weight_filler {
+            type: "xavier"
+        }
+    }
+}
+layer {
+    name: "fc2_relu"
+    type: "ReLU"
+    bottom: "fc2"
+    top: "fc2_relu"
+}
+layer {
+    name: "fc3"
+    type: "InnerProduct"
+    bottom: "fc2_relu"
+    top: "fc3"
+    inner_product_param {
+        num_output: 50
+        weight_filler {
+            type: "xavier"
+        }
+    }
+}
+layer {
+    name: "fc3_relu"
+    type: "ReLU"
+    bottom: "fc3"
+    top: "fc3_relu"
+}
+layer {
+    name: "fc4"
+    type: "InnerProduct"
+    bottom: "fc3_relu"
+    top: "fc4"
+    inner_product_param {
+        num_output: 10
+        weight_filler {
+            type: "xavier"
+        }
+    }
+}
+layer {
+    name: "fc4_relu"
+    type: "ReLU"
+    bottom: "fc4"
+    top: "fc4_relu"
+}
+layer {
+    name: "out"
+    type: "InnerProduct"
+    bottom: "fc4_relu"
+    top: "out"
+    inner_product_param {
+        num_output: 1
+        weight_filler {
+            type: "xavier"
+        }
+    }
+}
+layer {
+    name: "loss"
+    type: "EuclideanLoss"
+    bottom: "out"
+    bottom: "label"
+    top: "loss"
+}
+layer {
+    name: "accuracy"
+    type: "Accuracy"
+    bottom:"out"
+    bottom: "label"
+    top: "accuracy"
+    include {
+        phase: TEST
+    }
+}

@@ -1,0 +1,34 @@
+# Data
+data/
+
+# Model
+*.h5
+
+# ROS build files
+catkin_ws/devel
+catkin_ws/build
+ros2_ws/log
+ros2_ws/build
+ros2_ws/install
+
+# IntelliJ files
+.idea
+
+# Vscode files
+.vscode
+
+# Log
+*.log
+
+# Temporary files
+*.swp
+.nv/*
+!.nv/index
+
+# Byte-compiled
+*.pyc
+__pycache__/
+
+# Third party
+catkin_ws/src/rosbridge_suite/
+ros2_ws/src/ros2_message_filters/

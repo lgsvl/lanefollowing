@@ -1,0 +1,210 @@
+name: "LaneFollowing"
+layer {
+    name: "data"
+    type: "Input"
+    top: "data"
+    input_param {
+        shape {
+            dim: 1
+            dim: 3
+            dim: 66
+            dim: 200
+        }
+    }
+}
+# input: "data"
+# input_shape: {
+#     dim: 1
+#     dim: 3
+#     dim: 66
+#     dim: 200
+# }
+layer {
+    name: "conv1"
+    type: "Convolution"
+    bottom: "data"
+    top: "conv1"
+    convolution_param {
+        num_output: 24
+        pad: 0
+        kernel_size: 5
+        stride: 2
+        weight_filler {
+            type: "xavier"
+        }
+    }
+}
+layer {
+    name: "conv1_relu"
+    type: "ReLU"
+    bottom: "conv1"
+    top: "conv1_relu"
+}
+layer {
+    name: "conv2"
+    type: "Convolution"
+    bottom: "conv1_relu"
+    top: "conv2"
+    convolution_param {
+        num_output: 36
+        pad: 0
+        kernel_size: 5
+        stride: 2
+        weight_filler {
+            type: "xavier"
+        }
+    }
+}
+layer {
+    name: "conv2_relu"
+    type: "ReLU"
+    bottom: "conv2"
+    top: "conv2_relu"
+}
+layer {
+    name: "conv3"
+    type: "Convolution"
+    bottom: "conv2_relu"
+    top: "conv3"
+    convolution_param {
+        num_output: 48
+        pad: 0
+        kernel_size: 5
+        stride: 2
+        weight_filler {
+            type: "xavier"
+        }
+    }
+}
+layer {
+    name: "conv3_relu"
+    type: "ReLU"
+    bottom: "conv3"
+    top: "conv3_relu"
+}
+layer {
+    name: "conv4"
+    type: "Convolution"
+    bottom: "conv3_relu"
+    top: "conv4"
+    convolution_param {
+        num_output: 64
+        pad: 0
+        kernel_size: 3
+        stride: 1
+        weight_filler {
+            type: "xavier"
+        }
+    }
+}
+layer {
+    name: "conv4_relu"
+    type: "ReLU"
+    bottom: "conv4"
+    top: "conv4_relu"
+}
+layer {
+    name: "conv5"
+    type: "Convolution"
+    bottom: "conv4_relu"
+    top: "conv5"
+    convolution_param {
+        num_output: 64
+        pad: 0
+        kernel_size: 3
+        stride: 1
+        weight_filler {
+            type: "xavier"
+        }
+    }
+}
+layer {
+    name: "conv5_relu"
+    type: "ReLU"
+    bottom: "conv5"
+    top: "conv5_relu"
+}
+layer {
+    name: "fc1"
+    type: "InnerProduct"
+    bottom: "conv5_relu"
+    top: "fc1"
+    inner_product_param {
+        num_output: 1164
+        weight_filler {
+            type: "xavier"
+        }
+    }
+}
+layer {
+    name: "fc1_relu"
+    type: "ReLU"
+    bottom: "fc1"
+    top: "fc1_relu"
+}
+layer {
+    name: "fc2"
+    type: "InnerProduct"
+    bottom: "fc1_relu"
+    top: "fc2"
+    inner_product_param {
+        num_output: 200
+        weight_filler {
+            type: "xavier"
+        }
+    }
+}
+layer {
+    name: "fc2_relu"
+    type: "ReLU"
+    bottom: "fc2"
+    top: "fc2_relu"
+}
+layer {
+    name: "fc3"
+    type: "InnerProduct"
+    bottom: "fc2_relu"
+    top: "fc3"
+    inner_product_param {
+        num_output: 50
+        weight_filler {
+            type: "xavier"
+        }
+    }
+}
+layer {
+    name: "fc3_relu"
+    type: "ReLU"
+    bottom: "fc3"
+    top: "fc3_relu"
+}
+layer {
+    name: "fc4"
+    type: "InnerProduct"
+    bottom: "fc3_relu"
+    top: "fc4"
+    inner_product_param {
+        num_output: 10
+        weight_filler {
+            type: "xavier"
+        }
+    }
+}
+layer {
+    name: "fc4_relu"
+    type: "ReLU"
+    bottom: "fc4"
+    top: "fc4_relu"
+}
+layer {
+    name: "out"
+    type: "InnerProduct"
+    bottom: "fc4_relu"
+    top: "out"
+    inner_product_param {
+        num_output: 1
+        weight_filler {
+            type: "xavier"
+        }
+    }
+}

@@ -1,0 +1,15 @@
+net: "lane_following_model/train_val.prototxt"  # path to the network definition
+type: "Adam"  # back propagation algorithm
+base_lr: 1e-3  # base learning rate
+lr_policy: "fixed"  # the learning rate does not change
+# gamma: 0.1 
+# stepsize: 50000
+# momentum: 0.85
+# weight_decay: 0.0005
+max_iter: 930  # how many iterations for training, (# of epochs  * T / tb)
+test_iter: 23  # how many iterations to test in each test phase, (V / vb)
+test_interval: 93  # how often the test phase will be executed
+display: 93  # how often do we print training loss
+snapshot: 93  # how often do we save snapshot progress
+snapshot_prefix: "lane_following_model/new/lane_following"
+solver_mode: GPU

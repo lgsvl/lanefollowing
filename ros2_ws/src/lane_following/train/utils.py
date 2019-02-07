@@ -74,7 +74,7 @@ def preprocess_image(cv_img, crop=True):
     if crop:
         image = image[CROP_TOP_PIXEL:, :, :]
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32)  # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    image = image / 255. - 0.5  # image = cv2.normalize(image.astype('float'), None, 0.0, 1.0, cv2.NORM_MINMAX)
+    # image = image / 255. - 0.5
 
     return image
 

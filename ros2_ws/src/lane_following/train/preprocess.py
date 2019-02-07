@@ -36,13 +36,15 @@ def split_data(train_test_ratio=0.8):
     X_test = images[test_idx, :]
     Y_test = labels[test_idx, :]
 
-    with open(os.path.join(CSV_PATH, 'train.txt'), 'w+') as f:
-        for i in range(len(X_train)):
-            f.write('{} {}\n'.format(X_train[i][0], Y_train[i][0]))
+    if X_train.shape[0] > 0:
+        with open(os.path.join(HDF5_PATH, 'train.txt'), 'w+') as f:
+            for i in range(len(X_train)):
+                f.write('{} {}\n'.format(X_train[i][0], Y_train[i][0]))
 
-    with open(os.path.join(CSV_PATH, 'test.txt'), 'w+') as f:
-        for i in range(len(X_test)):
-            f.write('{} {}\n'.format(X_test[i][0], Y_test[i][0]))
+    if X_test.shape[0] > 0:
+        with open(os.path.join(HDF5_PATH, 'test.txt'), 'w+') as f:
+            for i in range(len(X_test)):
+                f.write('{} {}\n'.format(X_test[i][0], Y_test[i][0]))
     
     print('X_train:', X_train.shape[0] * 3, 'data points')
     print('Y_train:', Y_train.shape[0] * 3, 'data points')
@@ -51,8 +53,12 @@ def split_data(train_test_ratio=0.8):
 
 
 def write_to_hdf5(phase='train'):
-    with open (os.path.join(CSV_PATH, '{}.txt'.format(phase)), 'r') as f:
-        data = f.readlines()[:]
+    try:
+        with open(os.path.join(HDF5_PATH, '{}.txt'.format(phase)), 'r') as f:
+            data = f.readlines()[:]
+    except FileNotFoundError as e:
+        print(e)
+        return
     
     data_size = len(data) * 3
     i = 0
@@ -119,13 +125,17 @@ def write_to_hdf5(phase='train'):
     print('Happy training!')
 
 
-if __name__ == '__main__':
-    t0 = time.time()
-    split_data(0.8)
-    mkdir_p(HDF5_PATH)
+def truncate_hdf5():
     for f in [f for f in os.listdir(HDF5_PATH)]:
         os.remove(os.path.join(HDF5_PATH, f))
+
+
+if __name__ == '__main__':
+    t0 = time.time()
+    mkdir_p(HDF5_PATH)
+    truncate_hdf5()
+    split_data(1.0)
     write_to_hdf5('train')
-    write_to_hdf5('test')
+    # write_to_hdf5('test')
     t1 = time.time()
     print('Total elapsed time:', t1 - t0, 'seconds')

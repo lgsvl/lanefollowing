@@ -27,15 +27,19 @@ def load_dataset(file_name):
 
 def load_multi_dataset(txt_name):
     data_X, data_Y = None, None
-    with open(txt_name, 'r') as f:
-        for line in f:
-            line = line.rstrip()
-            x, y = load_dataset(line)
-            if data_X is None or data_Y is None:
-                data_X, data_Y = x, y
-            else:
-                data_X = np.concatenate((data_X, x))
-                data_Y = np.concatenate((data_Y, y))
+    try:
+        with open(txt_name, 'r') as f:
+            for line in f:
+                line = line.rstrip()
+                x, y = load_dataset(line)
+                if data_X is None or data_Y is None:
+                    data_X, data_Y = x, y
+                else:
+                    data_X = np.concatenate((data_X, x))
+                    data_Y = np.concatenate((data_Y, y))
+    except FileNotFoundError as e:
+        print(e)
+        return data_X, data_Y
 
     return data_X, data_Y
             

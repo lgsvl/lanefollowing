@@ -1,33 +1,11 @@
 version: "2.4"
 
 services:
-  drive:
-    build:
-      context: .
-    image: lgsvl/lanefollowing:latest
-    container_name: lanefollowing
-    volumes:
-      - ${HOME}/.Xauthority:/lgsvl/.Xauthority
-      - /tmp/.X11-unix:/tmp/.X11-unix
-      - .:/lanefollowing
-    environment:
-      - DISPLAY
-      - QT_X11_NO_MITSHM=1
-      - LIBOVERLAY_SCROLLBAR=0
-      - GTK2_RC_FILES=/usr/share/themes/Adwaita/gtk-2.0/gtkrc
-      - GTK_THEME=Adwaita
-      - CUDA_CACHE_PATH=/lanefollowing/.nv
-    runtime: nvidia
-    network_mode: host
-    init: true
-    privileged: true
-    command: /lanefollowing/scripts/drive.sh
-  
   collect:
     build:
       context: .
     image: lgsvl/lanefollowing:latest
-    container_name: lanefollowing_training
+    container_name: lanefollowing_collect
     volumes:
       - ${HOME}/.Xauthority:/lgsvl/.Xauthority
       - /tmp/.X11-unix:/tmp/.X11-unix
@@ -44,6 +22,72 @@ services:
     init: true
     privileged: true
     command: /lanefollowing/scripts/collect.sh
+  
+  preprocess:
+    build:
+      context: .
+    image: lgsvl/lanefollowing:latest
+    container_name: lanefollowing_preprocess
+    volumes:
+      - ${HOME}/.Xauthority:/lgsvl/.Xauthority
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - .:/lanefollowing
+    environment:
+      - DISPLAY
+      - QT_X11_NO_MITSHM=1
+      - LIBOVERLAY_SCROLLBAR=0
+      - GTK2_RC_FILES=/usr/share/themes/Adwaita/gtk-2.0/gtkrc
+      - GTK_THEME=Adwaita
+      - CUDA_CACHE_PATH=/lanefollowing/.nv
+    runtime: nvidia
+    network_mode: host
+    init: true
+    privileged: true
+    command: ["python", "-u", "/lanefollowing/ros2_ws/src/lane_following/train/preprocess.py"]
+
+  train:
+    build:
+      context: .
+    image: lgsvl/lanefollowing:latest
+    container_name: lanefollowing_train
+    volumes:
+      - ${HOME}/.Xauthority:/lgsvl/.Xauthority
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - .:/lanefollowing
+    environment:
+      - DISPLAY
+      - QT_X11_NO_MITSHM=1
+      - LIBOVERLAY_SCROLLBAR=0
+      - GTK2_RC_FILES=/usr/share/themes/Adwaita/gtk-2.0/gtkrc
+      - GTK_THEME=Adwaita
+      - CUDA_CACHE_PATH=/lanefollowing/.nv
+    runtime: nvidia
+    network_mode: host
+    init: true
+    privileged: true
+    command: ["python", "-u", "/lanefollowing/ros2_ws/src/lane_following/train/train.py"]
+
+  drive:
+    build:
+      context: .
+    image: lgsvl/lanefollowing:latest
+    container_name: lanefollowing_drive
+    volumes:
+      - ${HOME}/.Xauthority:/lgsvl/.Xauthority
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - .:/lanefollowing
+    environment:
+      - DISPLAY
+      - QT_X11_NO_MITSHM=1
+      - LIBOVERLAY_SCROLLBAR=0
+      - GTK2_RC_FILES=/usr/share/themes/Adwaita/gtk-2.0/gtkrc
+      - GTK_THEME=Adwaita
+      - CUDA_CACHE_PATH=/lanefollowing/.nv
+    runtime: nvidia
+    network_mode: host
+    init: true
+    privileged: true
+    command: /lanefollowing/scripts/drive.sh
   
   jupyter:
     build:
@@ -68,4 +112,3 @@ services:
     tty: true
     stdin_open: true
     command: ["/run_jupyter.sh", "--allow-root", "--ip=localhost"]
-

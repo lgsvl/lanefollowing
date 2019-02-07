@@ -10,6 +10,7 @@ BASE_PATH = os.path.dirname(os.path.realpath(__file__))
 CSV_PATH = u'{}/data'.format(BASE_PATH)
 IMG_PATH = u'{}/data/img'.format(BASE_PATH)
 HDF5_PATH = u'{}/data/hdf5'.format(BASE_PATH)
+MODEL_PATH = u'{}/model'.format(BASE_PATH)
 IMAGE_DIM = (200, 112)
 CROP_TOP_PIXEL = 46
 

@@ -4,7 +4,7 @@ import csv
 import time
 import h5py
 import numpy as np
-from utils import preprocess_image, CSV_PATH, IMG_PATH, HDF5_PATH
+from utils import mkdir_p, preprocess_image, CSV_PATH, IMG_PATH, HDF5_PATH
 
 
 BIAS = 0.025
@@ -25,7 +25,7 @@ def split_data(train_test_ratio=0.8):
     labels = np.array(labels).reshape(-1, 1)
 
     data_size = images.shape[0]
-    print('Total data size:', data_size)
+    print('Total data size:', data_size * 3)
 
     indices = np.random.permutation(data_size)
     train_size = int(round(data_size * train_test_ratio))
@@ -44,10 +44,10 @@ def split_data(train_test_ratio=0.8):
         for i in range(len(X_test)):
             f.write('{} {}\n'.format(X_test[i][0], Y_test[i][0]))
     
-    print('X_train:', X_train.shape)
-    print('Y_train:', Y_train.shape)
-    print('X_test:', X_test.shape)
-    print('Y_test:', Y_test.shape)
+    print('X_train:', X_train.shape[0] * 3, 'data points')
+    print('Y_train:', Y_train.shape[0] * 3, 'data points')
+    print('X_test:', X_test.shape[0] * 3, 'data points')
+    print('Y_test:', Y_test.shape[0] * 3, 'data points')
 
 
 def write_to_hdf5(phase='train'):
@@ -57,7 +57,8 @@ def write_to_hdf5(phase='train'):
     data_size = len(data) * 3
     i = 0
 
-    print('{} data size:'.format(phase), data_size)
+    print('Writing {} {} data into HDF5 with a batch size of {}'.format(data_size, phase, BATCH_SIZE))
+    print("Please wait. It'll take some time...")
 
     images = []
     labels = []
@@ -90,13 +91,13 @@ def write_to_hdf5(phase='train'):
                     f.create_dataset('data', data=X_data)
                     f.create_dataset('label', data=Y_data)
                 
-                with open(os.path.join(HDF5_PATH, '{}_h5_list.txt'.format(phase)), 'a') as f:
+                with open(os.path.join(HDF5_PATH, '{}_h5_list.txt'.format(phase)), 'a+') as f:
                     f.write(h5_file + '\n')
                 
                 images = []
                 labels = []
                 batch_idx += 1
-                print(i)
+                print('{} / {}'.format(i, data_size))
 
     if i % BATCH_SIZE != 0:
         h5_file = os.path.join(HDF5_PATH, '{}_{}.h5'.format(phase, batch_idx))
@@ -106,20 +107,25 @@ def write_to_hdf5(phase='train'):
             f.create_dataset('data', data=X_data)
             f.create_dataset('label', data=Y_data)
         
-        with open(os.path.join(HDF5_PATH, '{}_h5_list.txt'.format(phase)), 'a') as f:
+        with open(os.path.join(HDF5_PATH, '{}_h5_list.txt'.format(phase)), 'a+') as f:
             f.write(h5_file + '\n')
+
         images = []
         labels = []
         batch_idx += 1
-        print(i)
+        print('{} / {}'.format(i, data_size))
     
-    print('Done!')
+    print('All done! HDF5 data is in {}.'.format(HDF5_PATH))
+    print('Happy training!')
 
 
 if __name__ == '__main__':
     t0 = time.time()
     split_data(0.8)
+    mkdir_p(HDF5_PATH)
+    for f in [f for f in os.listdir(HDF5_PATH)]:
+        os.remove(os.path.join(HDF5_PATH, f))
     write_to_hdf5('train')
     write_to_hdf5('test')
     t1 = time.time()
-    print('Elapsed time:', t1 - t0)
+    print('Total elapsed time:', t1 - t0, 'seconds')

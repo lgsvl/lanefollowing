@@ -54,6 +54,8 @@ class Drive(Node):
     
     def get_model(self, model_file):
         model = load_model(model_file)
+        self.get_logger().info('Model loaded: {}'.format(model_file))
+
         return model
     
     def predict(self, model, img):

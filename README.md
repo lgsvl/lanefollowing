@@ -9,20 +9,20 @@ This documentation describes applying a deep learning neural network for lane fo
 - [Getting Started](#getting-started)
 - [Prerequisites](#prerequisites)
 - [Setup](#setup)
-	- [Installing Docker CE](#installing-docker-ce)
-	- [Installing NVIDIA Docker](#installing-nvidia-docker)
-	- [Pulling Docker Image](#pulling-docker-image)
-	- [What's inside Docker Image](#whats-inside-docker-image)
+    - [Installing Docker CE](#installing-docker-ce)
+    - [Installing NVIDIA Docker](#installing-nvidia-docker)
+    - [Pulling Docker Image](#pulling-docker-image)
+    - [What's inside Docker Image](#whats-inside-docker-image)
 - [Features](#features)
 - [Training Details](#training-details)
-	- [Network Architecture](#network-architecture)
-	- [Hyperparameters](#hyperparameters)
-	- [Dataset](#dataset)
+    - [Network Architecture](#network-architecture)
+    - [Hyperparameters](#hyperparameters)
+    - [Dataset](#dataset)
 - [How to Collect Data and Train Your Own Model with LGSVL Simulator](#how-to-collect-data-and-train-your-own-model-with-lgsvl-simulator)
-	- [Collect data from LGSVL Simulator](#collect-data-from-lgsvl-simulator)
-	- [Data preprocessing](#data-preprocessing)
-	- [Train a model](#train-a-model)
-	- [Drive with your trained model in LGSVL Simulator](#drive-with-your-trained-model-in-lgsvl-simulator)
+    - [Collect data from LGSVL Simulator](#collect-data-from-lgsvl-simulator)
+    - [Data preprocessing](#data-preprocessing)
+    - [Train a model](#train-a-model)
+    - [Drive with your trained model in LGSVL Simulator](#drive-with-your-trained-model-in-lgsvl-simulator)
 - [Future Works and Contributing](#future-works-and-contributing)
 - [Links](#links)
 
@@ -41,7 +41,6 @@ docker pull {docker image url}
 docker tag {docker image url} lgsvl/lanefollowing:latest
 ```
 
-Dataset
 To build ROS2 packages:
 
 ```
@@ -123,13 +122,13 @@ docker tag {docker image url} lgsvl/lanefollowing:latest
 - Training mode: Manually drive the vehicle and collect data
 - Autonomous Mode: The vehicle drives itself based on Lane Following model trained from the collected data
 - ROS2-based
-	- Time synchronous data collection node
-	- deploying a trained model in a node
+    - Time synchronous data collection node
+    - deploying a trained model in a node
 - Data preprocessing for training
-	- Data normalization
-	- Data augmentation
-	- Splitting data into training set and test set
-	- Writing/Reading data in HDF5 format
+    - Data normalization
+    - Data augmentation
+    - Splitting data into training set and test set
+    - Writing/Reading data in HDF5 format
 - Deep Learning model training: Train a model using Keras with TensorFlow backend
 
 ## Training Details
@@ -193,10 +192,10 @@ Place your trained model in `lanefollowing/ros2_ws/src/lane_following/model/mode
 
 Though the network can successfully drive and follow lanes on the bridge, there's still a lot of room for future improvements (biased to drive straight, afraid of shadows, few training data, and etc).
 - To improve model robustness collect more training data by driving in a wide variety of environments
-	- Changing weather and lighting effects (rain, fog, road wetness, time of day)
-	- Adding more road layouts and road textures
-	- Adding more shadows on roads
-	- Adding NPC cars around the ego vehicle
+    - Changing weather and lighting effects (rain, fog, road wetness, time of day)
+    - Adding more road layouts and road textures
+    - Adding more shadows on roads
+    - Adding NPC cars around the ego vehicle
 - Predict the car throttle along with the steering angle
 - Take into accounts time series analysis using RNN (Recurrent Neural Network)
 

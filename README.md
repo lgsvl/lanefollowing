@@ -34,11 +34,10 @@ First, clone the repository:
 git clone --recurse-submodules https://github.com/lgsvl/lanefollowing.git
 ```
 
-Next, pull the latest Docker image and add a tag:
+Next, pull the latest Docker image:
 
 ```
-docker pull {docker image url}
-docker tag {docker image url} lgsvl/lanefollowing:latest
+docker pull lgsvl/lanefollowing:latest
 ```
 
 To build ROS2 packages:
@@ -102,8 +101,7 @@ The installation steps for nvidia-docker are available at the [official repo](ht
 ### Pulling Docker Image
 
 ```
-docker pull {docker image url}
-docker tag {docker image url} lgsvl/lanefollowing:latest
+docker pull lgsvl/lanefollowing:latest
 ```
 
 ### What's inside Docker Image

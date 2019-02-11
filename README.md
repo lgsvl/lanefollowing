@@ -154,7 +154,7 @@ The network has 559,419 parameters and consists of 9 layers, including 5 convolu
 
 - Learning rate: 1e-04
 - Learning rate decay: None
-- Dropout: 0.5
+- Dropout rate: 0.5
 - Mini-batch size: 128
 - Epochs: 30
 - Optimization algorithm: Adam
@@ -162,7 +162,27 @@ The network has 559,419 parameters and consists of 9 layers, including 5 convolu
 - Training/Test set ratio: 8:2
 
 ### Dataset
-[TODO: Data image goes here]
+
+- Number of training data: 48,624 labeled images
+- Number of validation data: 12,156 labeled images
+
+#### Center Image
+<img src="docs/images/center_image.jpg" width="500">
+
+#### Left Image
+<img src="docs/images/left_image.jpg" width="500">
+
+#### Right Image
+<img src="docs/images/right_image.jpg" width="500">
+
+#### Original Image
+<img src="docs/images/original.png" width="500">
+
+#### Cropped Image
+<img src="docs/images/cropped.png" width="500">
+
+#### Data Distribution
+<img src="docs/images/data_distribution.png" width="500">
 
 ## How to Collect Data and Train Your Own Model with LGSVL Simulator
 

@@ -64,7 +64,7 @@ def write_to_hdf5(phase='train'):
     i = 0
 
     print('Writing {} {} data into HDF5 with a batch size of {}'.format(data_size, phase, BATCH_SIZE))
-    print("Please wait. It'll take some time...")
+    print("It should take some time. Please wait...")
 
     images = []
     labels = []

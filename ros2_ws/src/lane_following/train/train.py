@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow as tf
 from keras import backend as K
 from keras.models import Sequential
-from keras.layers import Conv2D, Dense, Activation, Flatten, Lambda
+from keras.layers import Conv2D, Dense, Activation, Flatten, Lambda, Dropout
 from keras.models import Sequential
 from keras.optimizers import Adam
 from utils import load_multi_dataset, mkdir_p, HDF5_PATH, MODEL_PATH
@@ -32,12 +32,13 @@ print('X_test shape:', X_test.shape)
 print('Y_test shape:', Y_test.shape)
 
 model = Sequential()
-model.add(Lambda(lambda x: x / 255.0, input_shape=(66, 200, 3)))
+model.add(Lambda(lambda x: x / 255.0, input_shape=(70, 320, 3)))
 model.add(Conv2D(24, (5, 5), strides=(2, 2), padding='valid', activation='relu'))
 model.add(Conv2D(36, (5, 5), strides=(2, 2), padding='valid', activation='relu'))
 model.add(Conv2D(48, (5, 5), strides=(2, 2), padding='valid', activation='relu'))
 model.add(Conv2D(64, (3, 3), strides=(1, 1), padding='valid', activation='relu'))
 model.add(Conv2D(64, (3, 3), strides=(1, 1), padding='valid', activation='relu'))
+model.add(Dropout(0.5))
 model.add(Flatten())
 model.add(Dense(100, activation='relu'))
 model.add(Dense(50, activation='relu'))
@@ -48,7 +49,7 @@ model.summary()
 model.compile(optimizer=Adam(lr=1e-04, decay=0.0), loss='mse')
 
 t0 = time.time()
-model.fit(X_train, Y_train, validation_data=(X_test, Y_test), shuffle=True, epochs=30, batch_size=256)
+model.fit(X_train, Y_train, validation_data=(X_test, Y_test), shuffle=True, epochs=30, batch_size=128)
 t1 = time.time()
 print('Total training time:', t1 - t0, 'seconds')
 

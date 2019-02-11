@@ -11,8 +11,7 @@ CSV_PATH = u'{}/data'.format(BASE_PATH)
 IMG_PATH = u'{}/data/img'.format(BASE_PATH)
 HDF5_PATH = u'{}/data/hdf5'.format(BASE_PATH)
 MODEL_PATH = u'{}/model'.format(BASE_PATH)
-IMAGE_DIM = (200, 112)
-CROP_TOP_PIXEL = 46
+IMAGE_DIM = (320, 70)
 
 
 def load_dataset(file_name):
@@ -70,13 +69,13 @@ def random_mini_batches(X, Y, mini_batch_size=64, seed=0):
  
 
 def preprocess_image(cv_img, crop=True):
-    image = cv2.resize(cv_img, IMAGE_DIM, interpolation=cv2.INTER_AREA)
     if crop:
-        image = image[CROP_TOP_PIXEL:, :, :]
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32)  # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    # image = image / 255. - 0.5
+        cv_img = cv_img[540:960, :, :]
+    cv_img = cv2.resize(cv_img, IMAGE_DIM, interpolation=cv2.INTER_AREA)
+    cv_img = cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
+    # cv_img = cv_img / 255. - 0.5
 
-    return image
+    return cv_img
 
 
 def mkdir_p(path):

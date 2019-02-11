@@ -50,7 +50,7 @@ class Drive(Node):
         message = TwistStamped()
         message.twist.angular.x = float(self.steering)
         self.control_pub.publish(message)
-        self.get_logger().info('Publishing steering cmd: "{}"'.format(message.twist.angular.x))
+        self.get_logger().info('Predicted steering angle: "{}"'.format(message.twist.angular.x))
     
     def get_model(self, model_file):
         model = load_model(model_file)

@@ -133,17 +133,19 @@ docker pull lgsvl/lanefollowing:latest
 
 ### Network Architecture
 
-The network has 252,219 parameters and consists of 9 layers, including 5 convolutional layers, 3 fully connected layers, and an output layer.
+The network has 559,419 parameters and consists of 9 layers, including 5 convolutional layers, 3 fully connected layers, and an output layer.
 
 | Layer (type) | Output Shape | Param # |
 |:------------:|:------------:|:-------:|
-| conv2d_1 (Conv2D) | (None, 31, 98, 24) | 1824 |
-| conv2d_2 (Conv2D) | (None, 14, 47, 36) | 21636 |
-| conv2d_3 (Conv2D) | (None, 5, 22, 48) | 43248 |
-| conv2d_4 (Conv2D) | (None, 3, 20, 64) | 27712 |
-| conv2d_5 (Conv2D) | (None, 1, 18, 64) | 36928 |
-| flatten_1 (Flatten) | (None, 1152) | 0 |
-| dense_1 (Dense) | (None, 100) | 115300 |
+| lambda_1 (Lambda) | (None, 70, 320, 3) | 0 |
+| conv2d_1 (Conv2D) | (None, 33, 158, 24) | 1824 |
+| conv2d_2 (Conv2D) | (None, 15, 77, 36) | 21636 |
+| conv2d_3 (Conv2D) | (None, 6, 37, 48) | 43248 |
+| conv2d_4 (Conv2D) | (None, 4, 35, 64) | 27712 |
+| conv2d_5 (Conv2D) | (None, 2, 33, 64) | 36928 |
+| dropout_1 (Dropout) | (None, 2, 33, 64) | 0 |
+| flatten_1 (Flatten) | (None, 4224) | 0 |
+| dense_1 (Dense) | (None, 100) | 422500 |
 | dense_2 (Dense) | (None, 50) | 5050 |
 | dense_3 (Dense) | (None, 10) | 510 |
 | dense_4 (Dense) | (None, 1) | 11 |
@@ -153,7 +155,7 @@ The network has 252,219 parameters and consists of 9 layers, including 5 convolu
 - Learning rate: 1e-04
 - Learning rate decay: None
 - Dropout: 0.5
-- Mini-batch size: 256
+- Mini-batch size: 128
 - Epochs: 30
 - Optimization algorithm: Adam
 - Loss function: Mean squared error

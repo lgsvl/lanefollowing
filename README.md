@@ -52,6 +52,11 @@ Now, launch the lane following model:
 docker-compose up drive
 ```
 
+(Optional) If you want visualizations, run drive_visual instead of drive:
+```
+docker-compose up drive_visual
+```
+
 That's it! Now, the lane following ROS2 node and the rosbridge should be up and running, waiting for LGSVL Simulator to connect.
 
 And, this is how driving looks like on San Francisco bridge in LGSVL Simulator.
@@ -195,7 +200,9 @@ To collect camera images as well as corresponding steering commands for training
 - Control command: /simulator/control/command (geometry_msgs/TwistStamped)
 
 To launch *rosbridge* and *collect* ROS2 node in a terminal:
-`docker-compose up collect`
+```
+docker-compose up collect
+```
 
 To drive a car and publish messages over rosbridge in training mode:
 - Launch **LGSVL Simulator**
@@ -217,7 +224,9 @@ Before start training your model with the data you collected, data preprocessing
 - Split data into training and testing dataset
 
 To run data preprocessing and obtain datasets for training:
-`docker-compose up preprocess`
+```
+docker-compose up preprocess
+```
 
 This will preprocess your data and write outputs in `lanefollowing/ros2_ws/src/lane_following/train/data/hdf5/` into HDF5 format for better I/O performance for training.
 
@@ -226,7 +235,9 @@ This will preprocess your data and write outputs in `lanefollowing/ros2_ws/src/l
 We use Keras with TensorFlow backend for training our model as an example. The hyperparameters such as learning rate, batch size, or number of epochs were chosen empirically. You can train a model as is but you are also welcome to modify the model architecture or any hyperparameters as you like in the code.
 
 To start training:
-`docker-compose up train`
+```
+docker-compose up train
+```
 
 After training is done, your final trained model will be in `lanefollowing/ros2_ws/src/lane_following/train/model/{current-date-and-time-in-utc}.h5` and your model is ready to drive autonomously.
 
@@ -235,7 +246,14 @@ After training is done, your final trained model will be in `lanefollowing/ros2_
 Now, it's time to deploy your trained model and test drive with it using LGSVL Simulator. You can replace your trained model with an existing one in `lanefollowing/ros2_ws/src/lane_following/model/model.h5` as this is the path for deployment.
 
 To launch *rosbridge* and *drive* ROS2 node in a terminal:
-`docker-compose up drive`
+```
+docker-compose up drive
+```
+
+Or, if you want visualizations as well, run drive_visual instead:
+```
+docker-compose up drive_visual
+```
 
 To drive a car in autonomous mode:
 - Launch **LGSVL Simulator**
@@ -249,7 +267,7 @@ Your car will start driving autonomously and try to mimic your driving behavior 
 
 ## Future Works and Contributing
 
-Though the network can successfully drive and follow lanes on the bridge, there's still a lot of room for future improvements (biased to drive straight, afraid of shadows, few training data, and etc).
+Though the network can successfully drive and follow lanes on the bridge, there's still a lot of room for future improvements (i.e., biased to drive straight, afraid of shadows, few training data, and etc).
 - To improve model robustness collect more training data by driving in a wide variety of environments
     - Changing weather and lighting effects (rain, fog, road wetness, time of day)
     - Adding more road layouts and road textures

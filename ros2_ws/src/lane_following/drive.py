@@ -21,23 +21,26 @@ sess = tf.Session(config=config)
 K.set_session(sess)
 
 
-BASE_PATH = os.path.dirname(os.path.realpath(__file__))
-MODEL_FILE = '{}/model/model.h5'.format(BASE_PATH)
-
-
 class Drive(Node):
     def __init__(self):
         super().__init__('drive')
 
         self.image_lock = threading.RLock()
 
+        # ROS communications
         self.image_sub = self.create_subscription(CompressedImage, '/simulator/sensor/camera/center/compressed', self.image_callback)
-        self.control_pub = self.create_publisher(TwistStamped, '/lgdrive/steering_cmd')
+        self.control_pub = self.create_publisher(TwistStamped, '/lanefollowing/steering_cmd')
 
-        timer_period = .02  # seconds
-        self.timer = self.create_timer(timer_period, self.publish_steering)
+        # ROS timer
+        self.timer_period = .02  # seconds
+        self.timer = self.create_timer(self.timer_period, self.publish_steering)
 
-        self.model = self.get_model(MODEL_FILE)
+        # ROS parameters
+        self.enable_visualization = self.get_parameter('visualization').value
+        self.model_path = self.get_parameter('model_path').value
+
+        # Model parameters
+        self.model = self.get_model(self.model_path)
         self.img = None
         self.steering = 0.
 
@@ -47,14 +50,14 @@ class Drive(Node):
         self.wheel_base = 2.836747  # in meters
         self.smoothed_angle = 0.
         self.inference_time = 0.
-        self.enable_visualization = self.get_parameter('visualization').value
+
 
     def image_callback(self, img):
         if self.image_lock.acquire(True):
             t0 = time.time()
             self.img = img
             if self.model is None:
-                self.model = self.get_model(MODEL_FILE)
+                self.model = self.get_model(self.model_path)
             self.steering = self.predict(self.model, self.img)
             t1 = time.time()
             self.inference_time = t1 - t0
@@ -68,11 +71,11 @@ class Drive(Node):
         message = TwistStamped()
         message.twist.angular.x = float(self.steering)
         self.control_pub.publish(message)
-        self.get_logger().info('Predicted steering angle: "{}"'.format(message.twist.angular.x))
+        self.get_logger().info('Predicted steering command: "{}"'.format(message.twist.angular.x))
     
-    def get_model(self, model_file):
-        model = load_model(model_file)
-        self.get_logger().info('Model loaded: {}'.format(model_file))
+    def get_model(self, model_path):
+        model = load_model(model_path)
+        self.get_logger().info('Model loaded: {}'.format(model_path))
 
         return model
     
@@ -106,13 +109,13 @@ class Drive(Node):
 
         cv2.ellipse(image, (960 + x, image.shape[0]), (curvature, 500), 0, ra, rb, (0, 255, 0), 2)
 
-        cv2.putText(image, "Prediction: %.3f percent" % (steering), (30, 100), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
-        cv2.putText(image, "Steering wheel angle: %.3f degrees" % steering_wheel_angle_deg, (30, 150), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
-        cv2.putText(image, "Wheel angle: %.3f degrees" % wheel_angle_deg, (30, 200), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
-        cv2.putText(image, "Inference time: %.3f s" % (self.inference_time), (30, 250), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
+        cv2.putText(image, "Prediction: %f.7" % (steering), (30, 70), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
+        cv2.putText(image, "Steering wheel angle: %.3f degrees" % steering_wheel_angle_deg, (30, 120), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
+        cv2.putText(image, "Wheel angle: %.3f degrees" % wheel_angle_deg, (30, 170), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
+        cv2.putText(image, "Inference time: %d ms" % (self.inference_time * 1000), (30, 220), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
 
         image = cv2.resize(image, (round(image.shape[1] / 2), round(image.shape[0] / 2)), interpolation=cv2.INTER_AREA)
-        cv2.imshow('End-to-End Lane Following', image)
+        cv2.imshow('LGSVL End-to-End Lane Following', image)
         cv2.waitKey(1)
 
 

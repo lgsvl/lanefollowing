@@ -12,11 +12,6 @@ import cv2
 from train.utils import mkdir_p, CSV_PATH, IMG_PATH
 
 
-# BASE_PATH = os.path.dirname(os.path.realpath(__file__))
-# CSV_PATH = u'{}/train/data'.format(BASE_PATH)
-# IMG_PATH = u'{}/train/data/img'.format(BASE_PATH)
-
-
 class Collect(Node):
     def __init__(self):
         super().__init__('collect')

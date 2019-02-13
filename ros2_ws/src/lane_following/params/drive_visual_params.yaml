@@ -1,0 +1,4 @@
+drive:
+    ros__parameters:
+        visualization: true
+        model_path: "/lanefollowing/ros2_ws/src/lane_following/model/model.h5"

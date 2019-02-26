@@ -22,9 +22,12 @@ ros2_ws/install
 
 # Temporary files
 *.swp
-.nv/*
-!.nv/index
+docker/.nv/*
+!docker/.nv/.gitkeep
 
 # Byte-compiled
 *.pyc
 __pycache__/
+
+# Jupyter notebook
+.ipynb_checkpoints/

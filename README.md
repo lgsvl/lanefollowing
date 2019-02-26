@@ -28,7 +28,7 @@ This documentation describes applying a deep learning neural network for lane fo
 
 ## Getting Started
 
-First, clone the repository:
+First, clone this repository:
 
 ```
 git clone --recurse-submodules https://github.com/lgsvl/lanefollowing.git

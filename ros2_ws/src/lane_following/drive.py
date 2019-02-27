@@ -51,13 +51,18 @@ class Drive(Node):
         self.smoothed_angle = 0.
         self.inference_time = 0.
 
+        # FPS
+        self.last_time = time.time()
+        self.frames = 0
+        self.fps = 0.
 
     def image_callback(self, img):
+        self.get_fps()
         if self.image_lock.acquire(True):
-            t0 = time.time()
             self.img = img
             if self.model is None:
                 self.model = self.get_model(self.model_path)
+            t0 = time.time()
             self.steering = self.predict(self.model, self.img)
             t1 = time.time()
             self.inference_time = t1 - t0
@@ -71,7 +76,7 @@ class Drive(Node):
         message = TwistStamped()
         message.twist.angular.x = float(self.steering)
         self.control_pub.publish(message)
-        self.get_logger().info('Predicted steering command: "{}"'.format(message.twist.angular.x))
+        self.get_logger().info('[{:.3f}] Predicted steering command: "{}"'.format(time.time(), message.twist.angular.x))
     
     def get_model(self, model_path):
         model = load_model(model_path)
@@ -112,11 +117,21 @@ class Drive(Node):
         cv2.putText(image, "Prediction: %f.7" % (steering), (30, 70), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
         cv2.putText(image, "Steering wheel angle: %.3f degrees" % steering_wheel_angle_deg, (30, 120), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
         cv2.putText(image, "Wheel angle: %.3f degrees" % wheel_angle_deg, (30, 170), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
-        cv2.putText(image, "Inference time: %d ms" % (self.inference_time * 1000), (30, 220), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
+        cv2.putText(image, "Prediction time: %d ms" % (self.inference_time * 1000), (30, 220), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
+        cv2.putText(image, "Frame speed: %d fps" % (self.fps), (30, 270), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
 
         image = cv2.resize(image, (round(image.shape[1] / 2), round(image.shape[0] / 2)), interpolation=cv2.INTER_AREA)
         cv2.imshow('LGSVL End-to-End Lane Following', image)
         cv2.waitKey(1)
+
+    def get_fps(self):
+        self.frames += 1
+        now = time.time()
+        if now >= self.last_time + 1.0:
+            delta = now - self.last_time
+            self.last_time = now
+            self.fps = self.frames / delta
+            self.frames = 0
 
 
 def main(args=None):

@@ -139,6 +139,54 @@ services:
     privileged: true
     command: /lanefollowing/scripts/drive_visual.sh
   
+  drive_cpu:
+    build:
+      context: .
+    image: lgsvl/lanefollowing:latest
+    container_name: lanefollowing_drive_cpu
+    volumes:
+      - ${HOME}/.Xauthority:/tmp/.Xauthority
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - .:/lanefollowing
+    environment:
+      - DISPLAY
+      - QT_X11_NO_MITSHM=1
+      - LIBOVERLAY_SCROLLBAR=0
+      - GTK2_RC_FILES=/usr/share/themes/Adwaita/gtk-2.0/gtkrc
+      - GTK_THEME=Adwaita
+      - CUDA_CACHE_PATH=/lanefollowing/.nv
+      - XAUTHORITY=/tmp/.Xauthority
+      - CUDA_VISIBLE_DEVICES=-1
+    runtime: nvidia
+    network_mode: host
+    init: true
+    privileged: true
+    command: /lanefollowing/scripts/drive.sh
+
+  drive_visual_cpu:
+    build:
+      context: .
+    image: lgsvl/lanefollowing:latest
+    container_name: lanefollowing_drive_visual_cpu
+    volumes:
+      - ${HOME}/.Xauthority:/tmp/.Xauthority
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - .:/lanefollowing
+    environment:
+      - DISPLAY
+      - QT_X11_NO_MITSHM=1
+      - LIBOVERLAY_SCROLLBAR=0
+      - GTK2_RC_FILES=/usr/share/themes/Adwaita/gtk-2.0/gtkrc
+      - GTK_THEME=Adwaita
+      - CUDA_CACHE_PATH=/lanefollowing/.nv
+      - XAUTHORITY=/tmp/.Xauthority
+      - CUDA_VISIBLE_DEVICES=-1
+    runtime: nvidia
+    network_mode: host
+    init: true
+    privileged: true
+    command: /lanefollowing/scripts/drive_visual.sh
+
   jupyter:
     build:
       context: .

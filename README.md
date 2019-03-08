@@ -59,8 +59,9 @@ docker-compose up drive_visual
 
 That's it! Now, the lane following ROS2 node and the rosbridge should be up and running, waiting for LGSVL Simulator to connect.
 
-And, this is how driving looks like on San Francisco bridge in LGSVL Simulator.
-[TODO: VIDEO goes here]
+**Click the image below to play Lane Following demo video**
+
+[![Lane Following Demo](http://img.youtube.com/vi/uMfA1-wTB7I/0.jpg)](http://www.youtube.com/watch?v=uMfA1-wTB7I)
 
 ## Prerequisites
 

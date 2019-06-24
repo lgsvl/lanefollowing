@@ -7,18 +7,7 @@ services:
     image: lgsvl/lanefollowing:latest
     container_name: lanefollowing_build
     volumes:
-      - ${HOME}/.Xauthority:/tmp/.Xauthority
-      - /tmp/.X11-unix:/tmp/.X11-unix
       - .:/lanefollowing
-    environment:
-      - DISPLAY
-      - QT_X11_NO_MITSHM=1
-      - LIBOVERLAY_SCROLLBAR=0
-      - GTK2_RC_FILES=/usr/share/themes/Adwaita/gtk-2.0/gtkrc
-      - GTK_THEME=Adwaita
-      - CUDA_CACHE_PATH=/lanefollowing/.nv
-      - XAUTHORITY=/tmp/.Xauthority
-    runtime: nvidia
     network_mode: host
     init: true
     privileged: true
@@ -30,17 +19,9 @@ services:
     image: lgsvl/lanefollowing:latest
     container_name: lanefollowing_collect
     volumes:
-      - ${HOME}/.Xauthority:/tmp/.Xauthority
-      - /tmp/.X11-unix:/tmp/.X11-unix
       - .:/lanefollowing
     environment:
-      - DISPLAY
-      - QT_X11_NO_MITSHM=1
-      - LIBOVERLAY_SCROLLBAR=0
-      - GTK2_RC_FILES=/usr/share/themes/Adwaita/gtk-2.0/gtkrc
-      - GTK_THEME=Adwaita
       - CUDA_CACHE_PATH=/lanefollowing/.nv
-      - XAUTHORITY=/tmp/.Xauthority
     runtime: nvidia
     network_mode: host
     init: true
@@ -53,17 +34,9 @@ services:
     image: lgsvl/lanefollowing:latest
     container_name: lanefollowing_preprocess
     volumes:
-      - ${HOME}/.Xauthority:/tmp/.Xauthority
-      - /tmp/.X11-unix:/tmp/.X11-unix
       - .:/lanefollowing
     environment:
-      - DISPLAY
-      - QT_X11_NO_MITSHM=1
-      - LIBOVERLAY_SCROLLBAR=0
-      - GTK2_RC_FILES=/usr/share/themes/Adwaita/gtk-2.0/gtkrc
-      - GTK_THEME=Adwaita
       - CUDA_CACHE_PATH=/lanefollowing/.nv
-      - XAUTHORITY=/tmp/.Xauthority
     runtime: nvidia
     network_mode: host
     init: true
@@ -76,17 +49,9 @@ services:
     image: lgsvl/lanefollowing:latest
     container_name: lanefollowing_train
     volumes:
-      - ${HOME}/.Xauthority:/tmp/.Xauthority
-      - /tmp/.X11-unix:/tmp/.X11-unix
       - .:/lanefollowing
     environment:
-      - DISPLAY
-      - QT_X11_NO_MITSHM=1
-      - LIBOVERLAY_SCROLLBAR=0
-      - GTK2_RC_FILES=/usr/share/themes/Adwaita/gtk-2.0/gtkrc
-      - GTK_THEME=Adwaita
       - CUDA_CACHE_PATH=/lanefollowing/.nv
-      - XAUTHORITY=/tmp/.Xauthority
     runtime: nvidia
     network_mode: host
     init: true
@@ -99,17 +64,9 @@ services:
     image: lgsvl/lanefollowing:latest
     container_name: lanefollowing_drive
     volumes:
-      - ${HOME}/.Xauthority:/tmp/.Xauthority
-      - /tmp/.X11-unix:/tmp/.X11-unix
       - .:/lanefollowing
     environment:
-      - DISPLAY
-      - QT_X11_NO_MITSHM=1
-      - LIBOVERLAY_SCROLLBAR=0
-      - GTK2_RC_FILES=/usr/share/themes/Adwaita/gtk-2.0/gtkrc
-      - GTK_THEME=Adwaita
       - CUDA_CACHE_PATH=/lanefollowing/.nv
-      - XAUTHORITY=/tmp/.Xauthority
     runtime: nvidia
     network_mode: host
     init: true
@@ -122,17 +79,13 @@ services:
     image: lgsvl/lanefollowing:latest
     container_name: lanefollowing_drive_visual
     volumes:
-      - ${HOME}/.Xauthority:/tmp/.Xauthority
+      - ${XAUTHORITY}:/tmp/.Xauthority
       - /tmp/.X11-unix:/tmp/.X11-unix
       - .:/lanefollowing
     environment:
       - DISPLAY
-      - QT_X11_NO_MITSHM=1
-      - LIBOVERLAY_SCROLLBAR=0
-      - GTK2_RC_FILES=/usr/share/themes/Adwaita/gtk-2.0/gtkrc
-      - GTK_THEME=Adwaita
-      - CUDA_CACHE_PATH=/lanefollowing/.nv
       - XAUTHORITY=/tmp/.Xauthority
+      - CUDA_CACHE_PATH=/lanefollowing/.nv
     runtime: nvidia
     network_mode: host
     init: true
@@ -145,22 +98,19 @@ services:
     image: lgsvl/lanefollowing:latest
     container_name: lanefollowing_drive_cpu
     volumes:
-      - ${HOME}/.Xauthority:/tmp/.Xauthority
+      - ${XAUTHORITY}:/tmp/.Xauthority
       - /tmp/.X11-unix:/tmp/.X11-unix
       - .:/lanefollowing
     environment:
       - DISPLAY
+      - XAUTHORITY=/tmp/.Xauthority
       - QT_X11_NO_MITSHM=1
       - LIBOVERLAY_SCROLLBAR=0
       - GTK2_RC_FILES=/usr/share/themes/Adwaita/gtk-2.0/gtkrc
       - GTK_THEME=Adwaita
-      - CUDA_CACHE_PATH=/lanefollowing/.nv
-      - XAUTHORITY=/tmp/.Xauthority
       - CUDA_VISIBLE_DEVICES=-1
-    runtime: nvidia
     network_mode: host
     init: true
-    privileged: true
     command: /lanefollowing/scripts/drive.sh
 
   drive_visual_cpu:
@@ -169,22 +119,20 @@ services:
     image: lgsvl/lanefollowing:latest
     container_name: lanefollowing_drive_visual_cpu
     volumes:
-      - ${HOME}/.Xauthority:/tmp/.Xauthority
+      - ${XAUTHORITY}:/tmp/.Xauthority
       - /tmp/.X11-unix:/tmp/.X11-unix
       - .:/lanefollowing
     environment:
       - DISPLAY
+      - XAUTHORITY=/tmp/.Xauthority
       - QT_X11_NO_MITSHM=1
       - LIBOVERLAY_SCROLLBAR=0
       - GTK2_RC_FILES=/usr/share/themes/Adwaita/gtk-2.0/gtkrc
       - GTK_THEME=Adwaita
-      - CUDA_CACHE_PATH=/lanefollowing/.nv
-      - XAUTHORITY=/tmp/.Xauthority
       - CUDA_VISIBLE_DEVICES=-1
-    runtime: nvidia
+      - TF_NEED_CUDA=0
     network_mode: host
     init: true
-    privileged: true
     command: /lanefollowing/scripts/drive_visual.sh
 
   jupyter:
@@ -193,17 +141,13 @@ services:
     image: lgsvl/lanefollowing:latest
     container_name: lanefollowing_jupyter
     volumes:
-      - ${HOME}/.Xauthority:/tmp/.Xauthority
-      - /tmp/.X11-unix:/tmp/.X11-unix
       - .:/lanefollowing
     environment:
-      - DISPLAY
       - QT_X11_NO_MITSHM=1
       - LIBOVERLAY_SCROLLBAR=0
       - GTK2_RC_FILES=/usr/share/themes/Adwaita/gtk-2.0/gtkrc
       - GTK_THEME=Adwaita
       - CUDA_CACHE_PATH=/lanefollowing/.nv
-      - XAUTHORITY=/tmp/.Xauthority
     runtime: nvidia
     network_mode: host
     init: true

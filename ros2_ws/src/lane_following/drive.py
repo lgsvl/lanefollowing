@@ -1,5 +1,6 @@
 import rclpy
 from rclpy.node import Node
+from rclpy.timer import WallTimer
 from geometry_msgs.msg import TwistStamped
 from sensor_msgs.msg import CompressedImage
 import threading
@@ -41,8 +42,8 @@ class Drive(Node):
         self.control_pub = self.create_publisher(TwistStamped, self.control_topic)
 
         # ROS timer
-        self.timer_period = .02  # seconds
-        self.timer = self.create_timer(self.timer_period, self.publish_steering)
+        self.publish_period = .02  # seconds
+        self.check_timer = self.create_timer(1, self.check_camera_topic)
 
         # ROS parameters
         self.enable_visualization = self.get_param('visualization', False)
@@ -87,9 +88,9 @@ class Drive(Node):
         self.log.info('[{:.3f}] Predicted steering command: "{}"'.format(time.time(), message.twist.angular.x))
 
     def get_model(self, model_path):
-        self.log.info('Loading model...')
+        self.log.info('Loading model from {}'.format(model_path))
         model = load_model(model_path)
-        self.log.info('Model loaded: {}'.format(model_path))
+        self.log.info('Model loaded!')
 
         return model
 
@@ -147,6 +148,14 @@ class Drive(Node):
         if val is None:
             val = default
         return val
+
+    def check_camera_topic(self):
+        if self.img is None:
+            self.log.info('Waiting a camera image from ROS topic: {}'.format(self.camera_topic))
+        else:
+            self.log.info('Received a camera image from ROS topic: {}'.format(self.camera_topic))
+            self.destroy_timer(self.check_timer)
+            self.create_timer(self.publish_period, self.publish_steering)
 
 
 def main(args=None):

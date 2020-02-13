@@ -24,32 +24,40 @@ K.set_session(sess)
 class Drive(Node):
     def __init__(self):
         super().__init__('drive')
+        self.log = self.get_logger()
+        self.log.info('Starting Drive node...')
 
         self.image_lock = threading.RLock()
 
+        # ROS topics
+        self.camera_topic = self.get_param('camera_topic')
+        self.control_topic = self.get_param('control_topic')
+
+        self.log.info('Camera topic: {}'.format(self.camera_topic))
+        self.log.info('Control topic: {}'.format(self.control_topic))
+
         # ROS communications
-        self.image_sub = self.create_subscription(CompressedImage, '/simulator/sensor/camera/center/compressed', self.image_callback)
-        self.control_pub = self.create_publisher(TwistStamped, '/lanefollowing/steering_cmd')
+        self.image_sub = self.create_subscription(CompressedImage, self.camera_topic, self.image_callback)
+        self.control_pub = self.create_publisher(TwistStamped, self.control_topic)
 
         # ROS timer
         self.timer_period = .02  # seconds
         self.timer = self.create_timer(self.timer_period, self.publish_steering)
 
         # ROS parameters
-        self.enable_visualization = self.get_parameter('visualization').value
-        self.model_path = self.get_parameter('model_path').value
+        self.enable_visualization = self.get_param('visualization', False)
+        self.model_path = self.get_param('model_path')
 
         # Model parameters
         self.model = self.get_model(self.model_path)
         self.img = None
         self.steering = 0.
+        self.inference_time = 0.
 
         # For visualizations
-        self.steer_ratio = 16.
-        self.steering_wheel_single_direction_max = 470.  # in degree (8.2 radian)
-        self.wheel_base = 2.836747  # in meters
-        self.smoothed_angle = 0.
-        self.inference_time = 0.
+        self.steer_ratio = self.get_param('steer_ratio', 16.)
+        self.steering_wheel_single_direction_max = self.get_param('steering_wheel_single_direction_max', 470.)  # in degrees
+        self.wheel_base = self.get_param('wheel_base', 2.836747)  # in meters
 
         # FPS
         self.last_time = time.time()
@@ -69,21 +77,22 @@ class Drive(Node):
             if self.enable_visualization:
                 self.visualize(self.img, self.steering)
             self.image_lock.release()
-    
+
     def publish_steering(self):
         if self.img is None:
             return
         message = TwistStamped()
         message.twist.angular.x = float(self.steering)
         self.control_pub.publish(message)
-        self.get_logger().info('[{:.3f}] Predicted steering command: "{}"'.format(time.time(), message.twist.angular.x))
-    
+        self.log.info('[{:.3f}] Predicted steering command: "{}"'.format(time.time(), message.twist.angular.x))
+
     def get_model(self, model_path):
+        self.log.info('Loading model...')
         model = load_model(model_path)
-        self.get_logger().info('Model loaded: {}'.format(model_path))
+        self.log.info('Model loaded: {}'.format(model_path))
 
         return model
-    
+
     def predict(self, model, img):
         c = np.fromstring(bytes(img.data), np.uint8)
         img = cv2.imdecode(c, cv2.IMREAD_COLOR)
@@ -132,6 +141,12 @@ class Drive(Node):
             self.last_time = now
             self.fps = self.frames / delta
             self.frames = 0
+
+    def get_param(self, key, default=None):
+        val = self.get_parameter(key).value
+        if val is None:
+            val = default
+        return val
 
 
 def main(args=None):

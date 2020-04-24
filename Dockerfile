@@ -60,28 +60,25 @@ RUN ${PIP} --no-cache-dir install --upgrade \
     pip \
     setuptools
 
-RUN ln -s $(which ${PYTHON}) /usr/local/bin/python 
+RUN ln -s $(which ${PYTHON}) /usr/local/bin/python
 
 RUN apt-get update && apt-get install -y \
-    curl \
-    git \
-    wget \
     openjdk-8-jdk \
     ${PYTHON}-dev \
     swig
 
 RUN ${PIP} --no-cache-dir install \
-    Pillow \
-    h5py \
-    ipykernel \
-    jupyter \
-    keras \
-    matplotlib \
-    mock \
-    numpy \
-    scipy \
-    sklearn \
-    pandas \
+    Pillow==5.4.1 \
+    h5py==2.9.0 \
+    ipykernel==5.1.0 \
+    jupyter==1.0.0 \
+    keras==2.2.4 \
+    matplotlib==3.0.2 \
+    mock==2.0.0 \
+    numpy==1.16.0 \
+    scipy==1.2.0 \
+    sklearn==0.0 \
+    pandas==0.24.0 \
     && ${PYTHON} -m ipykernel.kernelspec \
     && test "${USE_PYTHON_3_NOT_2}" -eq 1 && true || ${PIP} --no-cache-dir install \
     enum34
@@ -118,11 +115,11 @@ RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/lib
     rm /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
     bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/pip && \
     pip --no-cache-dir install --upgrade /tmp/pip/tensorflow-*.whl && \
-#    rm -rf /tmp/pip && \
     rm -rf /root/.cache
 
 # TensorBoard
 EXPOSE 6006
+
 # IPython
 EXPOSE 8888
 
@@ -131,8 +128,13 @@ RUN echo 'Etc/UTC' > /etc/timezone && \
     ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime && \
     apt-get update && apt-get install -q -y tzdata && rm -rf /var/lib/apt/lists/*
 
+
+#########################
+##   ROS & rosbridge   ##
+#########################
+
 # setup keys
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 421C365BD9FF1F717815A3895523BAEEB01FA116
+RUN set -ex && curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
 
 # setup sources.list
 RUN echo "deb [arch=amd64,arm64] http://packages.ros.org/ros2/ubuntu `lsb_release -sc` main" > /etc/apt/sources.list.d/ros2-latest.list
@@ -156,11 +158,10 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # install ros2 packages
-ENV ROS2_DISTRO crystal
+ENV ROS2_DISTRO dashing
 ENV ROS_MASTER_URI http://localhost:11311
 RUN apt-get update && apt-get install -y \
-    ros-${ROS2_DISTRO}-desktop=0.6.1-0* \
-    # ros-${ROS2_DISTRO}-ros1-bridge=0.6.1-1* \
+    ros-${ROS2_DISTRO}-desktop=0.7.3-1* \
     && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && apt-get install -y \
@@ -171,16 +172,23 @@ RUN apt-get update && apt-get install -y \
     ${PYTHON}-twisted \
     && rm -rf /var/lib/apt/lists/*
 
+RUN ${PYTHON} -m pip install -U \
+    pytest-repeat \
+    pytest-rerunfailures \
+    pytest \
+    pytest-cov \
+    pytest-runner
+
 # Node.js for ROS2 web bridge
 RUN set -ex \
-    && curl -sfL https://deb.nodesource.com/setup_9.x | bash - \
+    && curl -sfL https://deb.nodesource.com/setup_10.x | bash - \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
 
 # ROS2 web bridge
 ENV COLCON_PREFIX_PATH /lanefollowing/ros2_ws/install:/opt/ros/${ROS2_DISTRO}
 RUN set -ex \
     && cd /opt \
-    && git clone https://github.com/RobotWebTools/ros2-web-bridge.git \
+    && git clone -b 0.2.7 https://github.com/RobotWebTools/ros2-web-bridge.git \
     && cd ros2-web-bridge \
     && export CFLAGS="${CFLAGS} -fpermissive" \
     && export CXXFLAGS="${CXXFLAGS} -fpermissive" \

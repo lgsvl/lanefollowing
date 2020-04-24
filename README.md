@@ -43,7 +43,7 @@ docker pull lgsvl/lanefollowing:latest
 To build ROS2 packages:
 
 ```
-docker-compose up build
+docker-compose up build_ros
 ```
 
 Now, launch the lane following model:
@@ -89,7 +89,7 @@ To test if NVIDIA drivers are properly installed enter `nvidia-smi` in a termina
     |   0  GeForce GTX 108...  Off  | 00000000:65:00.0  On |                  N/A |
     |  0%   59C    P5    22W / 250W |   1490MiB / 11175MiB |      4%      Default |
     +-------------------------------+----------------------+----------------------+
-                                                                                
+
     +-----------------------------------------------------------------------------+
     | Processes:                                                       GPU Memory |
     |  GPU       PID   Type   Process name                             Usage      |
@@ -118,7 +118,7 @@ docker pull lgsvl/lanefollowing:latest
 - Python 3.6
 - TensorFlow 1.8
 - Keras 2.2.4
-- ROS2 Crystal + rosbridge
+- ROS2 Dashing + rosbridge
 - Jupyter Notebook
 
 ## Features

@@ -1,7 +1,7 @@
 version: "2.4"
 
 services:
-  build:
+  build_ros:
     build:
       context: .
     image: lgsvl/lanefollowing:latest
@@ -12,7 +12,7 @@ services:
     init: true
     privileged: true
     command: /lanefollowing/scripts/build.sh
-  
+
   collect:
     build:
       context: .
@@ -21,13 +21,13 @@ services:
     volumes:
       - .:/lanefollowing
     environment:
-      - CUDA_CACHE_PATH=/lanefollowing/.nv
+      - CUDA_CACHE_PATH=/lanefollowing/docker/.nv
     runtime: nvidia
     network_mode: host
     init: true
     privileged: true
     command: /lanefollowing/scripts/collect.sh
-  
+
   preprocess:
     build:
       context: .
@@ -36,7 +36,7 @@ services:
     volumes:
       - .:/lanefollowing
     environment:
-      - CUDA_CACHE_PATH=/lanefollowing/.nv
+      - CUDA_CACHE_PATH=/lanefollowing/docker/.nv
     runtime: nvidia
     network_mode: host
     init: true
@@ -51,7 +51,7 @@ services:
     volumes:
       - .:/lanefollowing
     environment:
-      - CUDA_CACHE_PATH=/lanefollowing/.nv
+      - CUDA_CACHE_PATH=/lanefollowing/docker/.nv
     runtime: nvidia
     network_mode: host
     init: true
@@ -66,13 +66,13 @@ services:
     volumes:
       - .:/lanefollowing
     environment:
-      - CUDA_CACHE_PATH=/lanefollowing/.nv
+      - CUDA_CACHE_PATH=/lanefollowing/docker/.nv
     runtime: nvidia
     network_mode: host
     init: true
     privileged: true
     command: /lanefollowing/scripts/drive.sh
-  
+
   drive_visual:
     build:
       context: .
@@ -85,13 +85,13 @@ services:
     environment:
       - DISPLAY
       - XAUTHORITY=/tmp/.Xauthority
-      - CUDA_CACHE_PATH=/lanefollowing/.nv
+      - CUDA_CACHE_PATH=/lanefollowing/docker/.nv
     runtime: nvidia
     network_mode: host
     init: true
     privileged: true
     command: /lanefollowing/scripts/drive_visual.sh
-  
+
   drive_cpu:
     build:
       context: .
@@ -147,7 +147,7 @@ services:
       - LIBOVERLAY_SCROLLBAR=0
       - GTK2_RC_FILES=/usr/share/themes/Adwaita/gtk-2.0/gtkrc
       - GTK_THEME=Adwaita
-      - CUDA_CACHE_PATH=/lanefollowing/.nv
+      - CUDA_CACHE_PATH=/lanefollowing/docker/.nv
     runtime: nvidia
     network_mode: host
     init: true

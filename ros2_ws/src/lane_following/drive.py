@@ -24,7 +24,7 @@ K.set_session(sess)
 
 class Drive(Node):
     def __init__(self):
-        super().__init__('drive')
+        super().__init__('drive', allow_undeclared_parameters=True, automatically_declare_parameters_from_overrides=True)
         self.log = self.get_logger()
         self.log.info('Starting Drive node...')
 

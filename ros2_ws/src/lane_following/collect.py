@@ -14,7 +14,7 @@ from train.utils import mkdir_p, CSV_PATH, IMG_PATH
 
 class Collect(Node):
     def __init__(self):
-        super().__init__('collect')
+        super().__init__('collect', allow_undeclared_parameters=True, automatically_declare_parameters_from_overrides=True)
 
         self.get_logger().info('[{}] Initializing...'.format(self.get_name()))
 

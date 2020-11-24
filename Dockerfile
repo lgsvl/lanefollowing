@@ -161,7 +161,7 @@ RUN apt-get update && apt-get install -y \
 ENV ROS2_DISTRO dashing
 ENV ROS_MASTER_URI http://localhost:11311
 RUN apt-get update && apt-get install -y \
-    ros-${ROS2_DISTRO}-desktop=0.7.3-1* \
+    ros-${ROS2_DISTRO}-desktop=0.7.4-1* \
     && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && apt-get install -y \
@@ -179,22 +179,12 @@ RUN ${PYTHON} -m pip install -U \
     pytest-cov \
     pytest-runner
 
-# Node.js for ROS2 web bridge
-RUN set -ex \
-    && curl -sfL https://deb.nodesource.com/setup_10.x | bash - \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
-
-# ROS2 web bridge
-ENV COLCON_PREFIX_PATH /lanefollowing/ros2_ws/install:/opt/ros/${ROS2_DISTRO}
+# install ros2 lgsvl bridge
 RUN set -ex \
     && cd /opt \
-    && git clone -b 0.2.7 https://github.com/RobotWebTools/ros2-web-bridge.git \
-    && cd ros2-web-bridge \
-    && export CFLAGS="${CFLAGS} -fpermissive" \
-    && export CXXFLAGS="${CXXFLAGS} -fpermissive" \
-    && bash -c "source /opt/ros/${ROS2_DISTRO}/setup.bash && npm config set python /usr/bin/python2.7 && npm install --global --production --unsafe-perm" \
-    && mkdir -p /opt/ros2-web-bridge/node_modules/rclnodejs/generated \
-    && chmod 0777 /opt/ros2-web-bridge/node_modules/rclnodejs/generated
+    && git clone -b ${ROS2_DISTRO}-devel https://github.com/lgsvl/ros2-lgsvl-bridge.git \
+    && cd ros2-lgsvl-bridge \
+    && bash -c "source /opt/ros/${ROS2_DISTRO}/setup.bash && colcon build --cmake-args '-DCMAKE_BUILD_TYPE=Release'"
 
 ARG USER_NAME=lgsvl
 
@@ -203,6 +193,7 @@ RUN adduser --disabled-password --gecos '' ${USER_NAME} \
     && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 RUN echo "source /opt/ros/${ROS2_DISTRO}/setup.bash" >> /home/${USER_NAME}/.bashrc
+RUN echo "source /opt/ros2-lgsvl-bridge/install/setup.bash" >> /home/${USER_NAME}/.bashrc
 RUN echo "source /lanefollowing/ros2_ws/install/local_setup.bash" >> /home/${USER_NAME}/.bashrc
 
 WORKDIR /lanefollowing

@@ -1,0 +1,6 @@
+collect:
+    ros__parameters:
+        center_camera_topic: "/simulator/sensor/camera/center/compressed"
+        left_camera_topic: "/simulator/sensor/camera/left/compressed"
+        right_camera_topic: "/simulator/sensor/camera/right/compressed"
+        canbus_topic: "/simulator/control/command"

@@ -198,20 +198,112 @@ To collect camera images as well as corresponding steering commands for training
 - Center camera: /simulator/sensor/camera/center/compressed (sensor_msgs/CompressedImage)
 - Left camera: /simulator/sensor/camera/left/compressed (sensor_msgs/CompressedImage)
 - Right camera: /simulator/sensor/camera/right/compressed (sensor_msgs/CompressedImage)
-- Control command: /simulator/control/command (geometry_msgs/TwistStamped)
+- Control command: /simulator/control/command (lgsvl_msgs/CanBusData)
 
-To launch *rosbridge* and *collect* ROS2 node in a terminal:
-```
-docker-compose up collect
+#### Complete sensor JSON configuration
+
+```JSON
+[
+    {
+        "type": "Vehicle Control",
+        "name": "Lane Following Model",
+        "params": {
+            "Topic": "/lanefollowing/steering_cmd"
+        }
+    },
+	{
+        "type": "CAN-Bus",
+        "name": "CAN Bus",
+        "params": {
+            "Frequency": 15,
+            "Topic": "/simulator/control/command"
+        }
+	},
+    {
+        "type": "Keyboard Control",
+        "name": "Keyboard Car Control"
+    },
+    {
+        "type": "Color Camera",
+        "name": "Center Camera",
+        "params": {
+            "Width": 1920,
+            "Height": 1080,
+            "Frequency": 15,
+            "JpegQuality": 75,
+            "FieldOfView": 50,
+            "MinDistance": 0.1,
+            "MaxDistance": 2000,
+            "Topic": "/simulator/sensor/camera/center/compressed"
+        },
+        "transform": {
+            "x": 0,
+            "y": 1.7,
+            "z": -0.2,
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+        }
+    },
+    {
+        "type": "Color Camera",
+        "name": "Left Camera",
+        "params": {
+            "Width": 1920,
+            "Height": 1080,
+            "Frequency": 15,
+            "JpegQuality": 75,
+            "FieldOfView": 50,
+            "MinDistance": 0.1,
+            "MaxDistance": 2000,
+            "Topic": "/simulator/sensor/camera/left/compressed"
+        },
+        "transform": {
+            "x": -0.8,
+            "y": 1.7,
+            "z": -0.2,
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+        }
+    },
+    {
+        "name": "Right Camera",
+        "type": "Color Camera",
+        "params": {
+            "Width": 1920,
+            "Height": 1080,
+            "Frequency": 15,
+            "JpegQuality": 75,
+            "FieldOfView": 50,
+            "MinDistance": 0.1,
+            "MaxDistance": 2000,
+            "Topic": "/simulator/sensor/camera/right/compressed"
+        },
+        "transform": {
+            "x": 0.8,
+            "y": 1.7,
+            "z": -0.2,
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+        }
+    }
+]
 ```
 
 To drive a car and publish messages over rosbridge in training mode:
 - Launch **LGSVL Simulator**
-- Click **Free Roaming** mode
-- Select **San Francisco** map and **XE_Rigged-lgsvl** vehicle
-- Make sure the simulator establishes connection with rosbridge
-- Click **Run** to begin
-- Enable **Main Camera**, **Left Camera**, **Right Camera**, and check **Publish Control Command**
+- Create a simulation in **Random Traffic** mode
+- Select your preferred map (e.g., **San Francisco**) for training
+- Select your preferred vehicle (e.g., **Lincoln2017MKZ**) with the sensor configuration above
+- Make sure your vehicle has ROS2 bridge in the sensor setup
+- Run your simulation
+
+Finally, to launch *rosbridge* and *collect* ROS2 node in a terminal:
+```
+docker-compose up collect
+```
 
 The node will start collecting data as you drive the car around. You should be able to check log messages in the terminal where the *collect* node is running. The final data is saved in `lanefollowing/ros2_ws/src/lane_following/train/data/` as csv and jpg files.
 
@@ -246,6 +338,15 @@ After training is done, your final trained model will be in `lanefollowing/ros2_
 
 Now, it's time to deploy your trained model and test drive with it using LGSVL Simulator. You can replace your trained model with an existing one in `lanefollowing/ros2_ws/src/lane_following/model/model.h5` as this is the path for deployment.
 
+To drive a car in autonomous mode:
+- Launch **LGSVL Simulator**
+- Create a simulation in **Random Traffic** mode
+- Select your preferred map (e.g., **San Francisco**) for driving
+- Select your preferred vehicle (e.g., **Lincoln2017MKZ**) with the sensor configuration above
+    - You are free to remove both side cameras from the sensor JSON as the model only uses the center camera in driving mode
+- Make sure your vehicle has ROS2 bridge in the sensor setup
+- Run your simulation
+
 To launch *rosbridge* and *drive* ROS2 node in a terminal:
 ```
 docker-compose up drive
@@ -256,15 +357,7 @@ Or, if you want visualizations as well, run drive_visual instead:
 docker-compose up drive_visual
 ```
 
-To drive a car in autonomous mode:
-- Launch **LGSVL Simulator**
-- Click **Free Roaming** mode
-- Select **San Francisco** map and **XE_Rigged-lgsvl** vehicle
-- Make sure the simulator establishes connection with rosbridge
-- Click **Run** to begin
-- Enable **Main Camera** (we don't need side cameras for inference)
-
-Your car will start driving autonomously and try to mimic your driving behavior when training the model.
+Your car will start driving autonomously and try to mimic your driving behavior when training the model. Note that the model only controls steering inputs as you drive your vehicle forward.
 
 ## Future Works and Contributing
 

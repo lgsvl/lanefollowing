@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import CompressedImage
-from geometry_msgs.msg import TwistStamped
+from lgsvl_msgs.msg import CanBusData
 import message_filters
 from datetime import datetime
 import os
@@ -16,32 +16,43 @@ class Collect(Node):
     def __init__(self):
         super().__init__('collect', allow_undeclared_parameters=True, automatically_declare_parameters_from_overrides=True)
 
-        self.get_logger().info('[{}] Initializing...'.format(self.get_name()))
+        self.log = self.get_logger()
+        self.log.info('Starting Collect node...')
 
         mkdir_p(CSV_PATH)
         mkdir_p(IMG_PATH)
 
-        sub_center_camera = message_filters.Subscriber(self, CompressedImage, '/simulator/sensor/camera/center/compressed')
-        sub_left_camera = message_filters.Subscriber(self, CompressedImage, '/simulator/sensor/camera/left/compressed')
-        sub_right_camera = message_filters.Subscriber(self, CompressedImage, '/simulator/sensor/camera/right/compressed')
-        sub_control = message_filters.Subscriber(self, TwistStamped, '/simulator/control/command')
+        center_camera_topic = self.get_parameter('center_camera_topic').value
+        left_camera_topic = self.get_parameter('left_camera_topic').value
+        right_camera_topic = self.get_parameter('right_camera_topic').value
+        canbus_topic = self.get_parameter('canbus_topic').value
 
-        ts = message_filters.ApproximateTimeSynchronizer([sub_center_camera, sub_left_camera, sub_right_camera, sub_control], 1, 0.1)
+        self.log.info('Center camera topic: {}'.format(center_camera_topic))
+        self.log.info('Left camera topic: {}'.format(left_camera_topic))
+        self.log.info('Right camera topic: {}'.format(right_camera_topic))
+        self.log.info('Canbus topic: {}'.format(canbus_topic))
+
+        sub_center_camera = message_filters.Subscriber(self, CompressedImage, center_camera_topic)
+        sub_left_camera = message_filters.Subscriber(self, CompressedImage, left_camera_topic)
+        sub_right_camera = message_filters.Subscriber(self, CompressedImage, right_camera_topic)
+        sub_canbus = message_filters.Subscriber(self, CanBusData, canbus_topic)
+
+        ts = message_filters.ApproximateTimeSynchronizer([sub_center_camera, sub_left_camera, sub_right_camera, sub_canbus], 1, 0.1)
         ts.registerCallback(self.callback)
 
-        self.get_logger().info('[{}] Up and running...'.format(self.get_name()))
+        self.log.info('Up and running...')
 
-    def callback(self, center_camera, left_camera, right_camera, control):
+    def callback(self, center_camera, left_camera, right_camera, canbus):
         ts_sec = center_camera.header.stamp.sec
         ts_nsec = center_camera.header.stamp.nanosec
-        steer_cmd = control.twist.angular.x
+        steer_cmd = canbus.steer_pct
 
-        self.get_logger().info("[{}.{}] Format: {}, Steering_cmd: {}".format(ts_sec, ts_nsec, center_camera.format, steer_cmd))
+        self.log.info("[{}.{}] Format: {}, Steering_cmd: {}".format(ts_sec, ts_nsec, center_camera.format, steer_cmd))
 
         msg_id = str(datetime.now().isoformat())
         self.save_image(center_camera, left_camera, right_camera, msg_id)
         self.save_csv(steer_cmd, msg_id)
-    
+
     def save_image(self, center_camera, left_camera, right_camera, msg_id):
         center_img_np_arr = np.fromstring(bytes(center_camera.data), np.uint8)
         left_img_np_arr = np.fromstring(bytes(left_camera.data), np.uint8)

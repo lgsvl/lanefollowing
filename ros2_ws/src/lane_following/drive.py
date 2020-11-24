@@ -1,8 +1,8 @@
 import rclpy
 from rclpy.node import Node
 from rclpy.timer import WallTimer
-from geometry_msgs.msg import TwistStamped
 from sensor_msgs.msg import CompressedImage
+from lgsvl_msgs.msg import VehicleControlData
 import threading
 import numpy as np
 import cv2
@@ -39,7 +39,7 @@ class Drive(Node):
 
         # ROS communications
         self.image_sub = self.create_subscription(CompressedImage, self.camera_topic, self.image_callback)
-        self.control_pub = self.create_publisher(TwistStamped, self.control_topic)
+        self.control_pub = self.create_publisher(VehicleControlData, self.control_topic)
 
         # ROS timer
         self.publish_period = .02  # seconds
@@ -65,6 +65,8 @@ class Drive(Node):
         self.frames = 0
         self.fps = 0.
 
+        self.log.info('Up and running...')
+
     def image_callback(self, img):
         self.get_fps()
         if self.image_lock.acquire(True):
@@ -82,10 +84,10 @@ class Drive(Node):
     def publish_steering(self):
         if self.img is None:
             return
-        message = TwistStamped()
-        message.twist.angular.x = float(self.steering)
+        message = VehicleControlData()
+        message.target_wheel_angular_rate = float(self.steering)
         self.control_pub.publish(message)
-        self.log.info('[{:.3f}] Predicted steering command: "{}"'.format(time.time(), message.twist.angular.x))
+        self.log.info('[{:.3f}] Predicted steering command: "{}"'.format(time.time(), message.target_wheel_angular_rate))
 
     def get_model(self, model_path):
         self.log.info('Loading model from {}'.format(model_path))

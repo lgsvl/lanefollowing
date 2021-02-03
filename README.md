@@ -205,8 +205,8 @@ To collect camera images as well as corresponding steering commands for training
 ```JSON
 [
     {
-        "type": "Vehicle Control",
-        "name": "Lane Following Model",
+        "type": "Lane Following",
+        "name": "Lane Following Sensor",
         "params": {
             "Topic": "/lanefollowing/steering_cmd"
         }
@@ -341,7 +341,7 @@ Now, it's time to deploy your trained model and test drive with it using LGSVL S
 To drive a car in autonomous mode:
 - Launch **LGSVL Simulator**
 - Create a simulation in **Random Traffic** mode
-- Select your preferred map (e.g., **San Francisco**) for driving
+- Select your preferred map (e.g., **SingleLaneRoad**) for driving
 - Select your preferred vehicle (e.g., **Lincoln2017MKZ**) with the sensor configuration above
     - You are free to remove both side cameras from the sensor JSON as the model only uses the center camera in driving mode
 - Make sure your vehicle has ROS2 bridge in the sensor setup
@@ -373,6 +373,7 @@ Though the network can successfully drive and follow lanes on the bridge, there'
 ## References
 
 - [Lane Following Github Repository](https://github.com/lgsvl/lanefollowing)
+- [Lane Following Sensor](https://github.com/lgsvl/LaneFollowingSensor)
 - [LGSVL Simulator](https://www.lgsvlsimulator.com/)
 - [NVIDIA's End-to-End Deep Learning Model for Self-Driving Cars](https://devblogs.nvidia.com/deep-learning-self-driving-cars/)
 

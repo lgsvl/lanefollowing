@@ -1,6 +1,9 @@
 import rclpy
 from rclpy.node import Node
 from rclpy.timer import WallTimer
+from rclpy.time import Time
+from rclpy.clock import ClockType
+from std_msgs.msg import Header
 from sensor_msgs.msg import CompressedImage
 from lgsvl_msgs.msg import VehicleControlData
 import threading
@@ -84,10 +87,24 @@ class Drive(Node):
     def publish_steering(self):
         if self.img is None:
             return
+
+        header = Header()
+        header.stamp = self.convert_timestamp(self.inference_time).to_msg()
+
         message = VehicleControlData()
+        message.header = header
         message.target_wheel_angular_rate = float(self.steering)
         self.control_pub.publish(message)
         self.log.info('[{:.3f}] Predicted steering command: "{}"'.format(time.time(), message.target_wheel_angular_rate))
+
+    def convert_timestamp(self, seconds):
+        nanosec = seconds * 1e9
+        secs = (int)(nanosec // 1e9)
+        nsecs = (int)(nanosec % 1e9)
+
+        time = Time(seconds=secs, nanoseconds=nsecs, clock_type=ClockType.STEADY_TIME)
+
+        return time
 
     def get_model(self, model_path):
         self.log.info('Loading model from {}'.format(model_path))
@@ -129,7 +146,7 @@ class Drive(Node):
         cv2.putText(image, "Prediction: %f.7" % (steering), (30, 70), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
         cv2.putText(image, "Steering wheel angle: %.3f degrees" % steering_wheel_angle_deg, (30, 120), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
         cv2.putText(image, "Wheel angle: %.3f degrees" % wheel_angle_deg, (30, 170), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
-        cv2.putText(image, "Prediction time: %d ms" % (self.inference_time * 1000), (30, 220), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
+        cv2.putText(image, "Inference time: %d ms" % (self.inference_time * 1000), (30, 220), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
         cv2.putText(image, "Frame speed: %d fps" % (self.fps), (30, 270), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
 
         image = cv2.resize(image, (round(image.shape[1] / 2), round(image.shape[0] / 2)), interpolation=cv2.INTER_AREA)

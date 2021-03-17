@@ -1,6 +1,6 @@
-# ROS2 End-to-End Lane Following Model with LGSVL Simulator
+# ROS2 End-to-End Lane Following Model with SVL Simulator
 
-This documentation describes applying a deep learning neural network for lane following in [LGSVL Simulator](https://www.lgsvlsimulator.com/). In this project, we use LGSVL Simulator for customizing sensors (one main camera and two side cameras) for a car, collect data for training, and deploying and testing a trained model.
+This documentation describes applying a deep learning neural network for lane following in [SVL Simulator](https://www.svlsimulator.com/). In this project, we use SVL Simulator for customizing sensors (one main camera and two side cameras) for a car, collect data for training, and deploying and testing a trained model.
 
 > This project was inspired by [NVIDIA's End-to-End Deep Learning Model for Self-Driving Cars](https://devblogs.nvidia.com/deep-learning-self-driving-cars/)
 
@@ -18,11 +18,11 @@ This documentation describes applying a deep learning neural network for lane fo
     - [Network Architecture](#network-architecture)
     - [Hyperparameters](#hyperparameters)
     - [Dataset](#dataset)
-- [How to Collect Data and Train Your Own Model with LGSVL Simulator](#how-to-collect-data-and-train-your-own-model-with-lgsvl-simulator)
-    - [Collect data from LGSVL Simulator](#collect-data-from-lgsvl-simulator)
+- [How to Collect Data and Train Your Own Model with SVL Simulator](#how-to-collect-data-and-train-your-own-model-with-svl-simulator)
+    - [Collect data from SVL Simulator](#collect-data-from-svl-simulator)
     - [Data preprocessing](#data-preprocessing)
     - [Train a model](#train-a-model)
-    - [Drive with your trained model in LGSVL Simulator](#drive-with-your-trained-model-in-lgsvl-simulator)
+    - [Drive with your trained model in SVL Simulator](#drive-with-your-trained-model-in-svl-simulator)
 - [Future Works and Contributing](#future-works-and-contributing)
 - [References](#references)
 
@@ -57,7 +57,7 @@ docker-compose up drive
 docker-compose up drive_visual
 ```
 
-That's it! Now, the lane following ROS2 node and the rosbridge should be up and running, waiting for LGSVL Simulator to connect.
+That's it! Now, the lane following ROS2 node and the rosbridge should be up and running, waiting for SVL Simulator to connect.
 
 **Click the image below to play Lane Following demo video**
 
@@ -190,9 +190,9 @@ The network has 559,419 parameters and consists of 9 layers, including 5 convolu
 #### Data Distribution
 <img src="docs/images/data_distribution.png" width="500">
 
-## How to Collect Data and Train Your Own Model with LGSVL Simulator
+## How to Collect Data and Train Your Own Model with SVL Simulator
 
-### Collect data from LGSVL Simulator
+### Collect data from SVL Simulator
 
 To collect camera images as well as corresponding steering commands for training, we provide a ROS2 *collect* node which subscribes to three camera image topics and a control command topic, approximately synchronizes time stamps of those messages, and then saves them as csv and jpg files. The topic names and types are as below:
 - Center camera: /simulator/sensor/camera/center/compressed (sensor_msgs/CompressedImage)
@@ -293,7 +293,7 @@ To collect camera images as well as corresponding steering commands for training
 ```
 
 To drive a car and publish messages over rosbridge in training mode:
-- Launch **LGSVL Simulator**
+- Launch **SVL Simulator**
 - Create a simulation in **Random Traffic** mode
 - Select your preferred map (e.g., **San Francisco**) for training
 - Select your preferred vehicle (e.g., **Lincoln2017MKZ**) with the sensor configuration above
@@ -334,12 +334,12 @@ docker-compose up train
 
 After training is done, your final trained model will be in `lanefollowing/ros2_ws/src/lane_following/train/model/{current-date-and-time-in-utc}.h5` and your model is ready to drive autonomously.
 
-### Drive with your trained model in LGSVL Simulator
+### Drive with your trained model in SVL Simulator
 
-Now, it's time to deploy your trained model and test drive with it using LGSVL Simulator. You can replace your trained model with an existing one in `lanefollowing/ros2_ws/src/lane_following/model/model.h5` as this is the path for deployment.
+Now, it's time to deploy your trained model and test drive with it using SVL Simulator. You can replace your trained model with an existing one in `lanefollowing/ros2_ws/src/lane_following/model/model.h5` as this is the path for deployment.
 
 To drive a car in autonomous mode:
-- Launch **LGSVL Simulator**
+- Launch **SVL Simulator**
 - Create a simulation in **Random Traffic** mode
 - Select your preferred map (e.g., **SingleLaneRoad**) for driving
 - Select your preferred vehicle (e.g., **Lincoln2017MKZ**) with the sensor configuration above
@@ -374,7 +374,7 @@ Though the network can successfully drive and follow lanes on the bridge, there'
 
 - [Lane Following Github Repository](https://github.com/lgsvl/lanefollowing)
 - [Lane Following Sensor](https://github.com/lgsvl/LaneFollowingSensor)
-- [LGSVL Simulator](https://www.lgsvlsimulator.com/)
+- [SVL Simulator](https://www.svlsimulator.com/)
 - [NVIDIA's End-to-End Deep Learning Model for Self-Driving Cars](https://devblogs.nvidia.com/deep-learning-self-driving-cars/)
 
 ## Copyright and License

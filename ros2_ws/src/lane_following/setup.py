@@ -27,7 +27,7 @@ setup(
               'deep learning',
               'lane following',
               'end to end',
-              'LGSVL Simulator',
+              'SVL Simulator',
               'Autonomous Driving'
     ],
     classifiers=[

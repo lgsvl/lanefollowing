@@ -1,6 +1,6 @@
-# How to create a ROS2-based AD stack with LGSVL Simulator
+# How to create a ROS2-based AD stack with SVL Simulator
 
-[The Lane Following model](https://github.com/lgsvl/lanefollowing) is a [ROS2](https://index.ros.org/doc/ros2/)-based Autonomous Driving stack developed with [LGSVL Simulator](https://www.lgsvlsimulator.com/). In high-level overview, the model is composed of three modules: a sensor module, a perception module, and a control module. The sensor module receives raw sensor data such as camera images from the simulator and preprocess the data before feeding into the perception module. Then, the perception module takes in the preprocessed data, extracts lane information, and predicts steering wheel commands. Finally, the control module sends a predicted control command back to the simulator, which would drive a car autonomously. This documentaion describes how to develop ROS2 nodes to receive sensor data from LGSVL Simulator and send control commands to drive a car.
+[The Lane Following model](https://github.com/lgsvl/lanefollowing) is a [ROS2](https://index.ros.org/doc/ros2/)-based Autonomous Driving stack developed with [SVL Simulator](https://www.svlsimulator.com/). In high-level overview, the model is composed of three modules: a sensor module, a perception module, and a control module. The sensor module receives raw sensor data such as camera images from the simulator and preprocess the data before feeding into the perception module. Then, the perception module takes in the preprocessed data, extracts lane information, and predicts steering wheel commands. Finally, the control module sends a predicted control command back to the simulator, which would drive a car autonomously. This documentaion describes how to develop ROS2 nodes to receive sensor data from SVL Simulator and send control commands to drive a car.
 
 ## Table of Contents
 
@@ -17,7 +17,7 @@
     - [Subscribe to a single topic](#subscribe-to-a-single-topic)
     - [Subscribe to multiple topics simultaneously](#subscribe-to-multiple-topics-simultaneously)
 - [Writing ROS2 Publisher Node](#writing-ros-publisher-node)
-    - [Publish command back to LGSVL Simulator](#publish-command-back-to-lgsvl-simulator)
+    - [Publish command back to SVL Simulator](#publish-command-back-to-svl-simulator)
 - [Running ROS2 Node](#running-ros2-node)
 - [References](#references)
 
@@ -27,11 +27,11 @@
 - Python3
 - ROS2
 - TensorFlow, Keras
-- LGSVL Simulator
+- SVL Simulator
 
 ## Setup
 
-Our AD stack implementation is based on ROS2 and uses rosbridge to communicate with LGSVL Simulator. To do that, we need to prepare Ubuntu machine with ROS2 installed. We provide a Docker image containing Ubuntu 18.04 and ROS2 installed so you can just pull the Docker image and start writing code right away.
+Our AD stack implementation is based on ROS2 and uses rosbridge to communicate with SVL Simulator. To do that, we need to prepare Ubuntu machine with ROS2 installed. We provide a Docker image containing Ubuntu 18.04 and ROS2 installed so you can just pull the Docker image and start writing code right away.
 
 ### Installing Docker CE
 
@@ -125,7 +125,7 @@ setup(
         'deep learning',
         'lane following',
         'end to end',
-        'LGSVL Simulator',
+        'SVL Simulator',
         'Autonomous Driving'
     ],
     classifiers=[
@@ -183,7 +183,7 @@ colcon build --symlink-install
 
 ## Running Rosbridge
 
-Rosbridge provides a JSON API to ROS functionality for non-ROS programs such as LGSVL Simulator. You can run rosbridge to connect your ROS node with LGSVL Simulator as below:
+Rosbridge provides a JSON API to ROS functionality for non-ROS programs such as SVL Simulator. You can run rosbridge to connect your ROS node with SVL Simulator as below:
 
 ```
 source /opt/ros/dashing/setup.bash
@@ -192,7 +192,7 @@ rosbridge
 
 ## Writing ROS2 Subscriber Node
 
-ROS nodes communicate with each other by passing messages. Messages are routed via a topic with publish/subscribe concepts. A node sends out a message by publishing it to a given topic. Then, a node that is interested in a certain kind of data will subscribe to the appropriate topic. In our cases, LGSVL Simulator publishes sensor data such as camera images or Lidar point clouds via rosbridge, and then the Lane Following model subscribes to that topic to receive sensor data, preprocess the data, feed them into the pretrained model, and finally compute a control command based on perceived sensor data. Below is an example of how to subscribe to sensor data topics from a ROS node. You can subscribe to a single topic only or multiple topics simultaneously.
+ROS nodes communicate with each other by passing messages. Messages are routed via a topic with publish/subscribe concepts. A node sends out a message by publishing it to a given topic. Then, a node that is interested in a certain kind of data will subscribe to the appropriate topic. In our cases, SVL Simulator publishes sensor data such as camera images or Lidar point clouds via rosbridge, and then the Lane Following model subscribes to that topic to receive sensor data, preprocess the data, feed them into the pretrained model, and finally compute a control command based on perceived sensor data. Below is an example of how to subscribe to sensor data topics from a ROS node. You can subscribe to a single topic only or multiple topics simultaneously.
 
 ### Subscribe to a single topic
 
@@ -273,7 +273,7 @@ if __name__ == '__main__':
 
 The publisher sends data to a topic. When you create a publisher you have to tell ROS of which type the data will be. In order to drive a car autonomously, the Lane Following model publishes a predicted control command back to the simulator via rosbridge.
 
-### Publish command back to LGSVL Simulator
+### Publish command back to SVL Simulator
 
 ```
 import rclpy
@@ -309,7 +309,7 @@ if __name__ == '__main__':
 
 ## Running ROS2 Node
 
-Once you have setup the rosbridge connection to LGSVL Simulator, you can launch your ROS node as follows:
+Once you have setup the rosbridge connection to SVL Simulator, you can launch your ROS node as follows:
 
 ```
 source /opt/ros/dashing/setup.bash
@@ -320,6 +320,6 @@ ros2 run {your_package} {your_node}
 ## References
 
 - [Lane Following Github Repository](https://github.com/lgsvl/lanefollowing)
-- [LGSVL Simulator](https://www.lgsvlsimulator.com/)
+- [SVL Simulator](https://www.svlsimulator.com/)
 - [ROS2 Documentation](https://index.ros.org/doc/ros2/)
 - [ROS2 Message Filters](https://github.com/intel/ros2_message_filters)

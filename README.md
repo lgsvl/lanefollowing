@@ -205,14 +205,14 @@ To collect camera images as well as corresponding steering commands for training
 ```JSON
 [
     {
-        "type": "Lane Following",
+        "type": "LaneFollowingSensor",
         "name": "Lane Following Sensor",
         "params": {
             "Topic": "/lanefollowing/steering_cmd"
         }
     },
 	{
-        "type": "CAN-Bus",
+        "type": "CanBusSensor",
         "name": "CAN Bus",
         "params": {
             "Frequency": 15,
@@ -220,11 +220,11 @@ To collect camera images as well as corresponding steering commands for training
         }
 	},
     {
-        "type": "Keyboard Control",
+        "type": "KeyboardControlSensor",
         "name": "Keyboard Car Control"
     },
     {
-        "type": "Color Camera",
+        "type": "ColorCameraSensor",
         "name": "Center Camera",
         "params": {
             "Width": 1920,
@@ -246,7 +246,7 @@ To collect camera images as well as corresponding steering commands for training
         }
     },
     {
-        "type": "Color Camera",
+        "type": "ColorCameraSensor",
         "name": "Left Camera",
         "params": {
             "Width": 1920,
@@ -268,8 +268,8 @@ To collect camera images as well as corresponding steering commands for training
         }
     },
     {
+        "type": "ColorCameraSensor",
         "name": "Right Camera",
-        "type": "Color Camera",
         "params": {
             "Width": 1920,
             "Height": 1080,

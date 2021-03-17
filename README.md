@@ -379,6 +379,6 @@ Though the network can successfully drive and follow lanes on the bridge, there'
 
 ## Copyright and License
 
-Copyright (c) 2018 LG Electronics, Inc.
+Copyright (c) 2018-2021 LG Electronics, Inc.
 
 This software contains code licensed as described in LICENSE.
